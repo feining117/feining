@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>ChatNow - Net </title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: #121826;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 16px;
+        }
+
+        .phone-frame {
+            width: 400px;
+            max-width: 100%;
+            height: 780px;
+            max-height: 90vh;
+            background: #f0f2f6;
+            border-radius: 32px;
+            box-shadow: 0 25px 50px -8px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.05);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            background: #ffffff;
+            padding: 14px 18px;
+            border-bottom: 1px solid #e0e4e9;
+            display: flex;
+            align-items: center;
+        }
+
+        .back-icon {
+            font-size: 24px;
+            margin-right: 12px;
+            color: #007aff;
+            font-weight: 300;
+            cursor: default;
+        }
+
+        .header-info {
+            flex: 1;
+            display: flex;
+            align-items: center;
+        }
+
+        .avatar-small {
+            width: 38px;
+            height: 38px;
+            background: #2c6b9e;
+            border-radius: 50%;
+            margin-right: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 500;
+            font-size: 16px;
+            background: linear-gradient(145deg, #346b99, #1e3a5f);
+        }
+
+        .contact-name {
+            font-weight: 600;
+            font-size: 17px;
+            color: #1c1e24;
+        }
+
+        .menu-icon {
+            font-size: 22px;
+            color: #007aff;
+            cursor: default;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px 12px 8px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            background: #f5f7fa;
+        }
+
+        .system-message {
+            text-align: center;
+            margin: 8px 0;
+            opacity: 0;
+            animation: fadeIn 0.3s forwards;
+        }
+
+        .system-bubble {
+            display: inline-block;
+            background: #d9dde3;
+            color: #4e5668;
+            font-size: 12px;
+            padding: 6px 16px;
+            border-radius: 40px;
+            max-width: 80%;
+        }
+
+        .message-row {
+            display: flex;
+            width: 100%;
+            opacity: 0;
+            animation: fadeIn 0.3s forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message-left {
+            justify-content: flex-start;
+        }
+
+        .message-right {
+            justify-content: flex-end;
+        }
+
+        .bubble-wrapper {
+            max-width: 82%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .bubble {
+            padding: 12px 15px;
+            border-radius: 20px;
+            font-size: 15px;
+            line-height: 1.45;
+            word-break: break-word;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+        }
+
+        .message-left .bubble {
+            background: #ffffff;
+            border-bottom-left-radius: 6px;
+            color: #1f2329;
+            border: 1px solid #e9ecf0;
+        }
+
+        .message-right .bubble {
+            background: #d0e6ff;
+            border-bottom-right-radius: 6px;
+            color: #0b1e2e;
+            border: 1px solid #b8d2f0;
+        }
+
+        /* 图片占位 */
+        .image-placeholder {
+            margin-top: 6px;
+            background: #eef3fc;
+            border-radius: 16px;
+            padding: 12px 14px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border: 1px dashed #6f9fd3;
+        }
+
+        .image-icon {
+            font-size: 32px;
+        }
+
+        .image-info {
+            font-size: 14px;
+            color: #1f4970;
+        }
+
+        .image-filename {
+            font-weight: 500;
+        }
+
+        .image-hint {
+            font-size: 12px;
+            color: #64748b;
+            margin-top: 4px;
+        }
+
+        /* 链接占位 */
+        .link-placeholder {
+            margin-top: 6px;
+            background: #eef0f5;
+            border-radius: 14px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-left: 4px solid #2a6ebb;
+        }
+
+        .link-icon {
+            font-size: 22px;
+        }
+
+        .link-content {
+            font-size: 14px;
+            color: #1e3a6b;
+            font-weight: 500;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+        }
+
+        .link-meta {
+            font-size: 12px;
+            color: #5e6f8c;
+        }
+    </style>
+</head>
+<body>
+<div class="phone-frame">
+    <div class="chat-header">
+        <div class="back-icon">←</div>
+        <div class="header-info">
+            <div class="avatar-small">N</div>
+            <div class="contact-name">Net</div>
+        </div>
+        <div class="menu-icon">⋯</div>
+    </div>
+
+    <div class="chat-messages" id="messageList"></div>
+</div>
+
+<script>
+    (function() {
+        // 严格按照 CSV 行顺序构建对话序列
+        const sequence = [
+      { side: 'right', content: '这应该能证明我的身份了。' },  // 0003
+
+            // 图片消息 (ID 0004)
+            { side: 'right', type: 'image', filename: 'birthday.png' },
+            { side: 'left', content: '他的确和我说过他有一个大他六岁的哥哥，和他是同一天生日。' },
+            { side: 'right', content: '嗯…' },
+            { side: 'left', content: '我是3月2日起注意到HA0J1没有正常在OWL论坛活跃的，我尝试联系他，但都失败了。' },
+            { side: 'left', content: '我隐约记得他提过公司名字，但又不知道他叫什么，才只能在公司这边的论坛发帖询问。' },
+            { side: 'right', content: '我这边找不到他的时间也差不多。而且他前段时间离职了，公司那边也问不到。' },
+            { side: 'left', content: '好吧。' },
+            { side: 'right', content: '不过OWL是什么？' },
+            { side: 'left', content: '是前段时间新研发出的一款人工智能聊天机器人，一直在内测，你不知道也正常。我和他就是在内测论坛上认识的。' },
+            { side: 'left', content: '他的OWL账号是HA0J1，如果能登上去，也许可以找到什么。' },
+            // 链接消息 (ID 0015)
+            { side: 'left', type: 'link', linkText: 'OWL 内测登录入口' },
+            { side: 'left', content: '但我不知道密码，你得自己试。' },
+            { side: 'left', content: '他的设备在你那里吗？' },
+            { side: 'right', content: '不在。怎么了？' },
+            { side: 'left', content: 'OWL的对话可以云端存储，但需要本人生物信息验证才能异地下载。' },
+            { side: 'left', content: '你就算成功登陆，也看不见标题之外的对话内容。' },
+            { side: 'right', content: '那不就没用了吗？' },
+            { side: 'left', content: '不一定。' },
+            { side: 'left', content: '你可以尝试和OWL继续对话，一旦触及聊过的关键词，再加以引导，OWL就会把先前的对话内容告诉你。' },
+            { side: 'right', content: '有点抽象。你举个具体例子说明一下？' },
+            { side: 'left', content: '假设你登录后看到了一个名为“午餐计划”的对话，虽然无法查看之前的记录，但你可以尝试用各种与午餐相关的关键词和OWL继续聊。' },
+            { side: 'left', content: '或许在你们聊到麦当劳时，OWL就会表示HA0J1在失踪当天曾要自己协助导航到某地的麦当劳。' },
+            { side: 'left', content: '那么你就获得了一条有关他去处的线索。' },
+            { side: 'right', content: '差不多明白了。我会试试。' },
+            { side: 'left', content: '尝试关键词时，你要尽量保证它们与对话标题有所关联，否则可能问不出什么。' },
+            { side: 'left', content: '比如在“午餐计划”中聊餐厅名字，在“学校生活”中聊老师，这样才方便OWL调出云端记忆的内容。' },
+            { side: 'left', content: '另外，OWL目前只能记忆同一对话内的上下文。就算你在对话A中提到过关键词X，在对话B中OWL对关键词X仍然不知情。' },
+            { side: 'right', content: '好。多谢了。' },
+            { side: 'left', content: '不用。有他消息了记得告知我，我如果查到什么也会发你。' },
+            { side: 'right', content: '👌' },
+        ];
+
+        const container = document.getElementById('messageList');
+        // 每条消息出现的间隔（毫秒），你可以根据需要调整
+        const delayBetweenMessages = 750;
+        container.innerHTML = '';
+
+        // 辅助函数：创建单条消息的DOM
+        function createMessageElement(item) {
+            if (item.type === 'system') {
+                const sysRow = document.createElement('div');
+                sysRow.className = 'system-message';
+                const sysBubble = document.createElement('div');
+                sysBubble.className = 'system-bubble';
+                sysBubble.textContent = item.content;
+                sysRow.appendChild(sysBubble);
+                return sysRow;
+            }
+
+            const row = document.createElement('div');
+            row.className = `message-row ${item.side === 'right' ? 'message-right' : 'message-left'}`;
+            
+            const wrapper = document.createElement('div');
+            wrapper.className = 'bubble-wrapper';
+            
+            const bubble = document.createElement('div');
+            bubble.className = 'bubble';
+
+if (item.type === 'image') {
+    bubble.innerHTML = `
+        <img src="birthday.png" 
+             alt="生日合影" 
+             style="max-width: 100%; border-radius: 12px; display: block;" />
+    `;
+} else if (item.type === 'link') {
+    bubble.innerHTML = `
+        <a href="chat_owl.html" target="_blank" style="color: #1e3a6b; text-decoration: underline; font-size: 15px;">
+            ${item.linkText}
+        </a>
+    `;
+            } else {
+                bubble.textContent = item.content;
+            }
+
+            wrapper.appendChild(bubble);
+            row.appendChild(wrapper);
+            return row;
+        }
+
+        // 逐条显示消息
+        sequence.forEach((item, index) => {
+            setTimeout(() => {
+                const msgElement = createMessageElement(item);
+                container.appendChild(msgElement);
+                // 自动滚动到最新消息
+                container.scrollTop = container.scrollHeight;
+            }, index * delayBetweenMessages);
+        });
+    })();
+</script>
+</body>
+</html>
