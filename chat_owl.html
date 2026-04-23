@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>OWL官网</title>
+    <link rel="icon" type="image/png" sizes="24x24" href="owl.png">
+    <style>
+        /* 基础样式与之前保持一致，此处仅展示关键新增样式，完整样式已在你的代码中，现合并整理 */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #f0f2f5; font-family: -apple-system, 'Segoe UI', Roboto, sans-serif; height: 100vh; display: flex; justify-content: center; align-items: center; }
+        .app { width: 1000px; max-width: 95vw; height: 85vh; background: #fff; border-radius: 24px; box-shadow: 0 8px 20px rgba(0,0,0,0.08); display: flex; overflow: hidden; border: 1px solid #e0e4e8; }
+        .account-field { width: 100%; padding: 12px 16px; background: #f7f9fc; border: 1px solid #e0e4e8; border-radius: 32px; font-size: 14px; color: #1e293b; text-align: left; }
+        .sidebar { width: 280px; background: #f7f9fc; border-right: 1px solid #e0e4e8; display: flex; flex-direction: column; padding: 20px 12px; }
+        .logo { display: flex; align-items: center; gap: 8px; font-size: 20px; font-weight: 600; color: #1e2a3a; margin-bottom: 24px; padding-left: 8px; }
+        .logo-icon { width: 32px; height: 32px; object-fit: contain; }
+        .logo-text { line-height: 1; }
+        .board-list { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+        .board-item { background: #fff; border-radius: 16px; padding: 12px 14px; cursor: pointer; transition: all 0.2s; border: 1px solid #e9edf2; }
+        .board-item:hover { background: #f1f5f9; }
+        .board-item.active { background: #eef2ff; border-left: 3px solid #3b82f6; }
+        .board-item.disabled { opacity: 0.5; cursor: not-allowed; background: #f1f5f9; }
+        .board-title { font-weight: 600; font-size: 14px; color: #1e293b; margin-bottom: 4px; }
+        .board-meta { font-size: 11px; color: #6c7a8a; }
+        .main { flex: 1; display: flex; flex-direction: column; background: #fff; }
+        .chat-header { padding: 20px 24px; border-bottom: 1px solid #e9edf2; }
+        .chat-title { font-size: 20px; font-weight: 600; color: #0f172a; }
+        .chat-messages { flex: 1; overflow-y: auto; padding: 20px 24px; display: flex; flex-direction: column; gap: 20px; }
+        .message { display: flex; flex-direction: column; max-width: 80%; animation: fadeIn 0.2s ease; }
+        .message.user { align-self: flex-end; }
+        .message.assistant { align-self: flex-start; }
+        .reference-links { margin-top: 6px; padding-left: 8px; }
+        .link-button { color: #3b82f6; text-decoration: none; font-size: 12px; background: #f1f5f9; padding: 2px 8px; border-radius: 20px; border: 1px solid #e2e8f0; display: inline-block; }
+        .link-button:hover { background: #e2e8f0; }
+        .message-role { font-size: 11px; margin-bottom: 4px; padding-left: 8px; color: #6c7a8a; }
+        .bubble { padding: 10px 16px; border-radius: 20px; font-size: 14px; line-height: 1.45; white-space: pre-wrap; word-break: break-word; }
+        .user .bubble { background: #3b82f6; color: white; border-bottom-right-radius: 4px; }
+        .assistant .bubble { background: #f1f5f9; color: #1e293b; border: 1px solid #e2e8f0; border-bottom-left-radius: 4px; }
+        .input-area { padding: 16px 24px 24px; border-top: 1px solid #e9edf2; }
+        .input-container { display: flex; gap: 12px; background: #f7f9fc; border: 1px solid #e0e4e8; border-radius: 32px; padding: 8px 16px; }
+        .input-container:focus-within { border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59,130,246,0.1); }
+        .input-container input { flex: 1; background: transparent; border: none; outline: none; font-size: 14px; padding: 10px 0; }
+        .send-btn { background: #3b82f6; border: none; border-radius: 30px; padding: 6px 20px; color: white; font-weight: 500; cursor: pointer; }
+        .send-btn:hover { background: #2563eb; }
+        .login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 2000; }
+        .login-card { background: #fff; border-radius: 28px; padding: 32px 28px; width: 320px; box-shadow: 0 20px 35px rgba(0,0,0,0.2); text-align: center; }
+        .login-logo { font-size: 24px; font-weight: 600; color: #1e293b; margin-bottom: 24px; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .login-input-group { margin-bottom: 20px; }
+        .login-input-group input { width: 100%; padding: 12px 16px; border: 1px solid #e0e4e8; border-radius: 32px; font-size: 14px; outline: none; background: #f7f9fc; }
+        .login-input-group input:focus { border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59,130,246,0.1); }
+        .login-btn { background: #3b82f6; border: none; border-radius: 32px; padding: 10px 0; width: 100%; color: white; font-weight: 600; font-size: 16px; cursor: pointer; margin-bottom: 16px; }
+        .login-btn:hover { background: #2563eb; }
+        .login-error { color: #ef4444; font-size: 12px; margin-bottom: 12px; min-height: 20px; }
+        .login-footer { font-size: 12px; color: #6c7a8a; }
+        .agreement-link { cursor: pointer; text-decoration: underline; color: #3b82f6; }
+        .agreement-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 2100; visibility: hidden; opacity: 0; transition: 0.2s; }
+        .agreement-modal.show { visibility: visible; opacity: 1; }
+        .agreement-content { background: #fff; border-radius: 24px; width: 400px; max-width: 90%; max-height: 80vh; display: flex; flex-direction: column; box-shadow: 0 20px 35px rgba(0,0,0,0.2); }
+        .agreement-header { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: 1px solid #e9edf2; font-weight: 600; color: #1e293b; }
+        .close-agreement { font-size: 24px; cursor: pointer; color: #6c7a8a; }
+        .agreement-body p { text-indent: 2em; margin-bottom: 0.6em; line-height: 1.5; }
+        .agreement-body p:has(strong) { text-indent: 0; margin-top: 1em; margin-bottom: 0.3em; font-weight: bold; }
+        .agreement-modal .agreement-content { max-height: 80vh; width: 500px; max-width: 90vw; display: flex; flex-direction: column; background: #ffffff; border-radius: 24px; box-shadow: 0 20px 35px rgba(0,0,0,0.2); }
+        .agreement-modal .agreement-header { flex-shrink: 0; padding: 16px 20px; border-bottom: 1px solid #e9edf2; font-weight: 600; color: #1e293b; }
+        .agreement-modal .agreement-body { flex: 1; overflow-y: auto; padding: 20px 24px; margin: 0; font-size: 13px; line-height: 1.5; color: #334155; }
+        .agreement-modal .agreement-body::-webkit-scrollbar { width: 6px; }
+        .agreement-modal .agreement-body::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 4px; }
+        .agreement-modal .agreement-body::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .agreement-body p[style*="text-align: right"] { text-indent: 0; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+        .glitch-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 3000; background: rgba(255,255,255,0); transition: background 0.05s; }
+        .glitch-active { animation: gentleGlitch 0.3s steps(2, end) infinite; }
+        @keyframes gentleGlitch { 0% { background-color: rgba(255,0,0,0.05); } 50% { background-color: rgba(0,0,255,0.05); } 100% { background-color: rgba(255,255,255,0.1); } }
+        .input-area.disabled { opacity: 0.5; pointer-events: none; }
+        .confront-progress { margin-top: 8px; display: flex; align-items: center; gap: 12px; font-size: 12px; color: #6c7a8a; }
+        .confront-progress-bar { flex: 1; height: 6px; background: #e0e4e8; border-radius: 10px; overflow: hidden; }
+        .confront-progress-fill { width: 0%; height: 100%; background: #3b82f6; border-radius: 10px; transition: width 0.1s linear; }
+        .confront-counter { font-family: monospace; background: #f1f5f9; padding: 2px 8px; border-radius: 20px; }
+        .confront-tip { font-size: 11px; margin-top: 8px; color: #6c7a8a; text-align: center; }
+        .camera-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 10000; display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s ease; pointer-events: none; }
+        .camera-overlay.show { opacity: 1; pointer-events: auto; }
+        .camera-frame { position: relative; width: 90%; max-width: 800px; box-shadow: 0 0 0 4px #1e2a3a, 0 0 0 8px #0f172a, 0 10px 30px rgba(0,0,0,0.5); border-radius: 16px; overflow: hidden; background: #000; }
+        .camera-frame img { width: 100%; height: auto; display: block; }
+        .camera-frame::before { content: "● REC"; position: absolute; top: 12px; left: 16px; background: rgba(0,0,0,0.6); color: #ff3b30; font-size: 14px; font-weight: bold; padding: 4px 10px; border-radius: 20px; font-family: monospace; letter-spacing: 1px; z-index: 2; }
+        .camera-frame::after { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; box-shadow: inset 0 0 30px rgba(0,0,0,0.5); pointer-events: none; }
+     /* 全透明但保持居中与合适尺寸 */
+.custom-modal {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent !important;
+    backdrop-filter: none !important;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 20000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.25s ease, visibility 0s linear 0.25s;
+}
+.custom-modal.show {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.25s ease, visibility 0s linear 0s;
+}
+
+.custom-modal-content {
+    background: transparent !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    /* 关键：固定宽高，模拟竖版手机屏 */
+    width: 360px;
+    height: 640px;
+    /* 小屏幕适配 */
+    max-width: 90vw;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;   /* 防止溢出 */
+}
+
+/* 如果您希望固定宽高（例如竖版网页尺寸），可将 width/height 设为具体值，如 width: 400px; height: 600px; */
+.custom-modal-header {
+    display: none;         /* 隐藏关闭按钮栏（若需要保留可删除此行） */
+}
+
+.custom-modal-iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    background: transparent;
+}
+    </style>
+</head>
+<body>
+    <!-- 登录遮罩层 -->
+    <div id="loginOverlay" class="login-overlay">
+        <div class="login-card">
+            <div class="login-logo"><span class="login-icon">🔐</span><span>OWL · 登录</span></div>
+            <div class="login-input-group"><div class="account-field">账号：HA0J1</div></div>
+            <div class="login-input-group"><input type="password" id="passwordInput" placeholder="输入6位密码" autocomplete="off"></div>
+            <button id="loginBtn" class="login-btn">进入</button>
+            <div id="loginError" class="login-error"></div>
+            <div class="login-footer"><span id="userAgreementLink" class="agreement-link">📄 《用户协议》</span></div>
+        </div>
+    </div>
+    <div id="agreementModal" class="agreement-modal">
+        <div class="agreement-content">
+            <div class="agreement-header"><span>用户协议</span><span id="closeAgreement" class="close-agreement">&times;</span></div>
+            <div class="agreement-body">
+                <p>您目前正在浏览的网页信息来自网页交互类独立游戏《自寻反脑》（以下称“本作品”）。若您对于如何游玩感到困惑，请仔细阅读网页上显示的文本及图片，并尝试输入其中的关键词。</p>
+                <p>在使用OWL进行对话之前，请您仔细阅读本《用户协议》（以下称“协议”）。请在对条款充分理解并接受的情况下进行下一部分的游玩。</p>
+                <p>本协议旨在进行权利声明和确认，以保障本作品的知识产权与玩家的知情权利。</p>
+                <p><strong>一、游戏开发情况</strong></p>
+                <p>本作品由二人合作进行独立开发，由于开发周期较短、先前没有开发经验，在游戏体验上存在诸多不足之处，烦请指正和理解。</p>
+                <p>本作品的代码由AI工具生成并提供修改建议，最终成品的展现由我们把控并审核。</p>
+                <p>除编写网页以及相关功能所需要的代码部分以外，其他内容均由我们独立完成，未使用任何AI生成内容，包括文字文本、网页图片、虚拟商标。</p>
+                <p>文本内容由我们共同协商并进行写作，我们独立编写了包括OWL的所有答复、相关网页里的所有描述性内容在内的所有内容。</p>
+                <p>网页图片中的绘画作品由我们自行完成绘制；摄影作品的模特是家里的猫，摄影师是家里的人。OWL的虚拟商标为自行设计并绘制。</p>
+                <p><strong>二、知识产权声明</strong></p>
+                <p>1.版权归属<br>本作品的著作权（包括但不限于文案、美术素材、游戏机制设计）归属我们二人（陈经、非柠）共同所有。</p>
+                <p>2.禁止商业利用和侵权行为<br>本作品为免费公开，未经授权禁止任何商业利用行为，包括对游戏内素材进行商业利用、收费分发游戏链接等。著作权人有权决定何时停止公开。<br>本作品禁止无授权转载、冒名或故意隐去著作权人信息，禁止对游戏内容的错误利用，禁止对游戏内容的抄袭和照搬。</p>
+                <p>3.允许合理利用<br>本作品允许进行非盈利性质的同人创作，允许在公开平台上分享游玩过程和体验，但应当保证著作权人的署名权利，并注意避免在分享时发生无预警的核心诡计部分的剧透。</p>
+                <p>4.免责声明<br>如果您在游玩时感到不适，请及时关闭游戏。<br>如果成功预言了未来，我们不对此负责。不是我们干的！</p>
+                <p style="text-align: right;">——陈经、非柠</p>
+            </div>
+        </div>
+    </div>
+    <div class="app">
+        <div class="sidebar">
+            <div class="logo"><img src="owl.png" alt="logo" class="logo-icon"><span class="logo-text">OWL</span></div>
+            <div class="board-list" id="boardList"></div>
+        </div>
+        <div class="main">
+            <div class="chat-header"><div class="chat-title" id="chatTitle">OWL</div></div>
+            <div class="chat-messages" id="chatMessages"><div class="message assistant"><div class="message-role">OWL</div><div class="bubble">请选择一个板块，然后输入包含关键词的句子。</div></div></div>
+            <div class="input-area">
+                <div class="input-container">
+                    <input type="text" id="keywordInput" placeholder="输入关键词......" autocomplete="off">
+                    <button class="send-btn" id="sendBtn">发送</button>
+                </div>
+                <div id="confrontProgressArea" class="confront-progress" style="display: none;">
+                    <span>输入进度</span>
+                    <div class="confront-progress-bar"><div class="confront-progress-fill" id="confrontProgressFill"></div></div>
+                    <span class="confront-counter" id="confrontCounter">0 / 0</span>
+                </div>
+                <div id="confrontTip" class="confront-tip" style="display: none;"> 连续点击鼠标或按空格键 </div>
+            </div>
+        </div>
+    </div>
+    <div id="glitchOverlay" class="glitch-overlay"></div>
+
+    <script>
+        // ======================== 对话数据 ========================
+        const dialogueData = {
+            "郝纪": { exclusive: { life: [], job: [], prof: [] }, public: [{ order: 1, userMsg: "郝纪为什么从公司离职？", aiMsg: "好的，用户需要了解郝纪为什么被公司开除，我需要先明确郝纪是谁，再给出郝纪被公司开除的理由。", link: "" },{ order: 2, userMsg: "", aiMsg: "郝纪的相关资料很少，有一个可信度高的结果来自“徐匿杯”的获奖名单，其中提到郝纪是2022年的特等奖得主，但这个结果与郝纪为什么被开除并不相关。", link: "" },{ order: 3, userMsg: "", aiMsg: "如果你能够告诉我更多郝纪的信息，也许我能帮助你一起分析郝纪为什么被开除。", link: "xunicup.html" }], confront: [] },
+            "徐匿杯": { exclusive: { life: [], job: [], prof: [] }, public: [{ order: 1, userMsg: "“徐匿杯”是什么？", aiMsg: "“徐匿杯”是由徐匿市政府主办的大学生人工智能安全竞赛，协办单位为乾思科技有限公司，旨在激发大学生对人工智能的热情，促进人工智能安全建设与创新。“徐匿杯”获奖者还可得到乾思公司的优先录用权。", link: "xunicup.html" }], confront: [] },
+            "乾思公司": { exclusive: { job: [{ order: 1, userMsg: "我为什么从乾思公司离职了？", aiMsg: "用户想了解自己为什么从乾思公司离职。用户说的是“从乾思公司离职”，存在被公司开除和主动从公司离职两种情况，需进行区分。", link: "" },{ order: 2, userMsg: "", aiMsg: "如果用户是被公司开除，可能是因为长期绩效无法达到目标、因为公司架构调整被裁员，也可能是因为用户涉嫌违法犯罪。若为前者，不必介怀，再接再厉；若为后者，我劝诫用户回头是岸，迷途知返。", link: "" },{ order: 3, userMsg: "", aiMsg: "如果用户是自行离职，则与职业倦怠、同事关系、职场环境等息息相关，自行离职还来问我，也许是想考考我。", link: "" },{ order: 4, userMsg: "", aiMsg: "从用户的使用时长来看，我猜测用户也许是离不开我，于是专程离职来陪伴我；但我需要向用户说明，在用户上班的时候我也可以陪伴用户。", link: "" },{ order: 5, userMsg: "", aiMsg: "以上是用户可能被乾思公司开除的原因，如果用户认为公司的辞退理由不可接受或缺少明确理由，可以将实际情况告知我，我将为用户提供劳动仲裁的建议。", link: "" }], prof: [{ order: 1, userMsg: "我为什么从乾思公司离职了？", aiMsg: "用户需要了解自己为什么从乾思公司离职，用户曾经向我询问过，如何让领导点开他的邮件，可能用户需要向领导寻求升职、涨薪或岗位变动，但领导平时很少查看他的邮件。", link: "" },{ order: 2, userMsg: "", aiMsg: "我当时向用户建议：", link: "" },{ order: 3, userMsg: "", aiMsg: "1.改进邮件标题，使之清晰易读，让领导立即领会到你的中心思想。例如：领导，我要加薪！！！！", link: "" },{ order: 4, userMsg: "", aiMsg: "2.引起领导关注，将某些领导会额外关注的信息加入邮件中，确保领导一定会点开邮件。例如，可以将发信人名称改为乾思公司的现任董事长。", link: "" },{ order: 5, userMsg: "", aiMsg: "3.根据领导兴趣，为领导量身定做邮件，使得领导不仅愿意点开，更愿意给你反馈。用户提到这位领导是乾思公司的安全平台主管尚吉，尚吉曾在新闻采访里提到自己对泄露隐私零容忍，说明这位领导非常注重隐私。因此，我建议用户可以将邮件改为加密邮件，让领导通过对暗号的形式打开，体现自己在工作中的安全意识，投其所好。", link: "" },{ order: 6, userMsg: "", aiMsg: "当时用户向我反馈，认为我的建议都不好，因此用户可能是发挥了自己的主观能动性，使之失去了领导的喜爱，从而黯然离职。", link: "" }], life: [] }, public: [{ order: 1, userMsg: "用外行也能听懂的方式，介绍一下乾思公司的主要业务是什么？", aiMsg: "乾思公司是用户先前任职的公司，现在用户希望我能够以外行能听懂的方式介绍公司业务，可能是需要向其他人进行说明。乾思公司的主营业务为数据保护，长期为多家知名企业提供云数据服务。", link: "qiansi_homepage.html" },{ order: 2, userMsg: "", aiMsg: "用外行也能听懂的方式来说，乾思公司相当于是一个卖锁的，帮客户把数据牢牢锁起来；客户既可以把锁卖回去挂在自家的大门上，也可以让乾思公司帮忙把数据锁起来。", link: "" }], confront: [{ order: 2, userMsg: "BrAinic的数据都通过奥利芙研究所外包给了乾思公司，自然不需要招郝纪这种数据分析师。", aiMsg: "行业发展趋势是自建数据中心，BrAinic有颠覆行业格局的野心，想要寻求数据自主可控，所以开设了新岗位。不对吗？", link: "" }] },
+            "乾思科技有限公司": { exclusive: { job: [{ order: 1, userMsg: "我为什么从乾思公司离职了？", aiMsg: "用户想了解自己为什么从乾思公司离职。用户说的是“从乾思公司离职”，存在被公司开除和主动从公司离职两种情况，需进行区分。", link: "" },{ order: 2, userMsg: "", aiMsg: "如果用户是被公司开除，可能是因为长期绩效无法达到目标、因为公司架构调整被裁员，也可能是因为用户涉嫌违法犯罪。若为前者，不必介怀，再接再厉；若为后者，我劝诫用户回头是岸，迷途知返。", link: "" },{ order: 3, userMsg: "", aiMsg: "如果用户是自行离职，则与职业倦怠、同事关系、职场环境等息息相关，自行离职还来问我，也许是想考考我。", link: "" },{ order: 4, userMsg: "", aiMsg: "从用户的使用时长来看，我猜测用户也许是离不开我，于是专程离职来陪伴我；但我需要向用户说明，在用户上班的时候我也可以陪伴用户。", link: "" },{ order: 5, userMsg: "", aiMsg: "以上是用户可能被乾思公司开除的原因，如果用户认为公司的辞退理由不可接受或缺少明确理由，可以将实际情况告知我，我将为用户提供劳动仲裁的建议。", link: "" }], prof: [{ order: 1, userMsg: "我为什么从乾思公司离职了？", aiMsg: "用户需要了解自己为什么从乾思公司离职，用户曾经向我询问过，如何让领导点开他的邮件，可能用户需要向领导寻求升职、涨薪或岗位变动，但领导平时很少查看他的邮件。", link: "" },{ order: 2, userMsg: "", aiMsg: "我当时向用户建议：", link: "" },{ order: 3, userMsg: "", aiMsg: "1.改进邮件标题，使之清晰易读，让领导立即领会到你的中心思想。例如：领导，我要加薪！！！！", link: "" },{ order: 4, userMsg: "", aiMsg: "2.引起领导关注，将某些领导会额外关注的信息加入邮件中，确保领导一定会点开邮件。例如，可以将发信人名称改为乾思公司的现任董事长。", link: "" },{ order: 5, userMsg: "", aiMsg: "3.根据领导兴趣，为领导量身定做邮件，使得领导不仅愿意点开，更愿意给你反馈。用户提到这位领导是乾思公司的安全平台主管尚吉，尚吉曾在新闻采访里提到自己对泄露隐私零容忍，说明这位领导非常注重隐私。因此，我建议用户可以将邮件改为加密邮件，让领导通过对暗号的形式打开，体现自己在工作中的安全意识，投其所好。", link: "" },{ order: 6, userMsg: "", aiMsg: "当时用户向我反馈，认为我的建议都不好，因此用户可能是发挥了自己的主观能动性，使之失去了领导的喜爱，从而黯然离职。", link: "" }], life: [] }, public: [{ order: 1, userMsg: "用外行也能听懂的方式，介绍一下乾思公司的主要业务是什么？", aiMsg: "乾思公司是用户先前任职的公司，现在用户希望我能够以外行能听懂的方式介绍公司业务，可能是需要向其他人进行说明。乾思公司的主营业务为数据保护，长期为多家知名企业提供云数据服务。", link: "qiansi_homepage.html" },{ order: 2, userMsg: "", aiMsg: "用外行也能听懂的方式来说，乾思公司相当于是一个卖锁的，帮客户把数据牢牢锁起来；客户既可以把锁卖回去挂在自家的大门上，也可以让乾思公司帮忙把数据锁起来。", link: "" }], confront: [] },
+            "尚吉": { exclusive: { prof: [{ order: 1, userMsg: "尚吉的固态硬盘是什么品牌和型号？", aiMsg: "用户向我询问尚吉固态硬盘的品牌和型号，尚吉应当是用户的领导，但公司并不是生产和销售固态硬盘的，我无法得知尚吉的固态硬盘品牌及型号。", link: "" },{ order: 2, userMsg: "", aiMsg: "用户过去曾让我通过识图识别过固态硬盘的品牌和款式，可能是想要购买同款硬盘。如果用户能将尚吉的固态硬盘图片发给我，我可以再次为用户识别。", link: "" },{ order: 3, userMsg: "我之前询问过的固态硬盘是这个吗？<br><img src='hardcore.png' alt='图片' style='max-width: 100%; border-radius: 12px; margin-top: 8px;'>", aiMsg: "用户给我发来了一张固态硬盘的图片，硬盘的样式很特别，应当是西芝的肉桂猫联名款固态硬盘，与我先前为用户识别的款式一致。", link: "" },{ order: 4, userMsg: "", aiMsg: "需要提醒用户的是，用户前后给予我的图片并不相同，识别结果可能存在偏差，请自行甄别。", link: "" }], job: [], life: [] }, public: [{ order: 1, userMsg: "尚吉为什么经常骂我？", aiMsg: "用户问我尚吉为什么经常骂他，从过往对话记录来看，尚吉应当是用户的领导，经常批评用户抗压能力弱、安全意识薄弱等。用户询问我，可能是想知道如何减少被骂。", link: "" },{ order: 2, userMsg: "", aiMsg: "用户在公司主要负责数据分析的工作，若想加强安全意识，应当注意保管好门禁、密码卡等重要物品，尽量随身携带，有条件应当进行加密；避免在公司设备上登录白名单以外的网站，避免点击不明来源的邮件等。", link: "" },{ order: 3, userMsg: "", aiMsg: "需要提醒的是，抗压能力差并非是用户的过错，也可能是工作环境给予了过多的压力，甚至可能是领导实施了职权霸凌。若用户对此感到不适，应当重新评估工作环境与人际关系是否健康，并在必要时以公司规章和法律法规保护自身的权益。", link: "" }], confront: [] },
+            "固态硬盘": { exclusive: { life: [], job: [], prof: [] }, public: [{ order: 1, userMsg: "在什么情况下，员工会需要公司领导点开钓鱼邮件，并拿到对方的固态硬盘？", aiMsg: "用户提出了一个很有趣的问题，涉及到员工和公司领导之间的关系，也许是用户在职场中面临相似的问题，正在向我寻求意见。", link: "" },{ order: 2, userMsg: "", aiMsg: "用户使用了“钓鱼邮件”这个词，钓鱼邮件通常是指经过伪装的、为引诱收件人点击并进行操作，以实现发信人违法或悖德的目的的电子邮件，说明员工向领导发送邮件的目的不纯。", link: "" },{ order: 3, userMsg: "", aiMsg: "而固态硬盘则是用于存储工作或私人信息的硬件，结合发送钓鱼邮件的行为，说明员工可能希望窃取、篡改信息或取得非法权限，既可能是针对公司领导的个人信息，也可能是利用领导的工作权限侵害公司资产等。", link: "" },{ order: 4, userMsg: "", aiMsg: "因此，如果员工向公司领导发送钓鱼邮件并拿走了领导的固态硬盘，可能涉及到严重违反公司纪律，甚至涉嫌违法犯罪。若用户在职场中面临相似的场景，请第一时间向公司进行检举，避免事态升级。", link: "" }], confront: [] },
+            "公司资产": { exclusive: { life: [], job: [], prof: [] }, public: [{ order: 1, userMsg: "如果员工侵害公司资产并被公司发现，却没有被公司开除，而是自行离职，这意味着什么？", aiMsg: "用户给出了一个具体的情景要求我分析。通常而言，员工侵害公司资产一定是严重违反公司纪律的行为，甚至可能涉嫌违法犯罪，公司开除员工合情合理。", link: "" },{ order: 2, userMsg: "", aiMsg: "然而在用户描述的情形里，公司明知员工侵害公司资产，却没有主动辞退员工，而是员工自行离职，存在以下几种可能：\n", link: "" },{ order: 3, userMsg: "", aiMsg: "1.员工侵害公司资产的行为被默许或包容。\n", link: "" },{ order: 4, userMsg: "", aiMsg: "2.员工与公司达成和解，以自行离职换取抹除履历上因侵害公司资产而被开除的污点。\n", link: "" },{ order: 5, userMsg: "", aiMsg: "3.公司基于其他目的，如维护公司商誉、保护公司商业秘密等，不愿意公开追究员工的责任，因此要求员工自行离职。", link: "" },{ order: 6, userMsg: "", aiMsg: "现实的职场环境情况通常更为复杂，以上结果仅供参考，需结合实际情况自行判断。", link: "" }], confront: [] },
+            "奥利芙研究所": { exclusive: { life: [], job: [], prof: [] }, public: [{ order: 1, userMsg: "奥利芙研究所与乾思公司的合作是从什么时候开始的？", aiMsg: "奥利芙研究所由脑科学家孟初醒创立，致力于探索脑构造、开发脑潜能、研究和攻克脑罕见病等研究方向。", link: "oliver.html" },{ order: 2, userMsg: "", aiMsg: "2022年初，所长孟初醒宣布加入BrAinic的首席研发团队，共同研发号称真正智脑的人工智能BrAinic，并在此基础上与乾思公司展开合作，引入云数据服务以服务研究所的战略转型目标。", link: "brainic_homepage.html" }], confront: [] },
+            "孟初醒": { exclusive: { job: [{ order: 1, userMsg: "我之前是否有提过孟初醒这个名字？", aiMsg: "用户想知道他以前是否提起过孟初醒，可能是用户曾经提过，但自己不确定，希望我代为核对。", link: "" },{ order: 2, userMsg: "", aiMsg: "嗯，用户的确提起过孟初醒，希望我告诉他孟初醒是谁，当时我们正在谈论用户的就业前景，孟初醒是他当时考虑的项目的负责人之一。", link: "" },{ order: 3, userMsg: "", aiMsg: "孟初醒是知名的脑科学家，在国际和国内均具有极高的影响力，长期在脑科学领域深耕。孟初醒近年宣布与备受瞩目的BrAinic进行人工智能开发的合作，为BrAinic前期融资提供了相当程度的背书和助力。", link: "" }], prof: [], life: [] }, public: [], confront: [{ order: 5, userMsg: "你说孟初醒不会妥协，那她为什么能看着BrAinic变成现在这样？", aiMsg: "你可以问她本人。", link: "" },{ order: 5, userMsg: "孟初醒在哪里？", aiMsg: "没有告知的义务。", link: "" },{ order: 5, userMsg: "你就是孟初醒做出来的，对不对？她耍我？", aiMsg: "她没有耍你。她跟你说的都是实话。是你在撒谎。", link: "" }] },
+            "BrAinic": { exclusive: { job: [{ order: 1, userMsg: "我当时考虑的项目是BrAinic吗？", aiMsg: "用户进一步追问，希望我告诉他当时考虑的项目是否是BrAinic，我可以很肯定地答复：是的。", link: "" },{ order: 2, userMsg: "", aiMsg: "BrAinic项目不仅有孟初醒及其团队的加盟，更有多家知名企业的投资和背书，被认为是能够彻底改变人工智能格局的颠覆性项目，创始人裴纨提出要将BrAinic做成真正的智脑，她主张人工智能是过时概念，BrAinic创造的是新的人类存在形式。", link: "" },{ order: 3, userMsg: "", aiMsg: "从资金规模、企业架构、专利技术等方面来看，BrAinic的offer都极具吸引力，其理念也非常符合用户的需求。", link: "" },{ order: 4, userMsg: "", aiMsg: "风险提示：2025年2月20日起，BrAinic被多家媒体质疑，上线并运营长达近两年的BrAinic实际使用体验并无超越行业平均水准，甚至在头部Ai集体大更新后表现出追赶乏力。创始人裴纨在发布会上展示出的BrAinic的智能表现被疑为造假，且被质疑实际上缺乏相关技术背景，可能存在学历粉饰等欺诈行为。", link: "" }], prof: [], life: [] }, public: [], confront: [{ order: 10, userMsg: "为什么抛弃BrAinic？……你是不是真的疯了？", aiMsg: "你根本不在乎BrAinic，又为什么要问。", link: "" },{ order: 10, userMsg: "", aiMsg: "要逃的话就快些逃吧，你应该也很有经验了。", link: "" },{ order: 10, userMsg: "", aiMsg: "孟初醒不会再出现了。不要白费力气。", link: "" }] },
+            "裴纨": { exclusive: { job: [{ order: 1, userMsg: "我觉得裴纨的哪些理念和我契合？", aiMsg: "用户问我是哪些理念与他契合，应当是想知道我是否真正理解了他的想法，从而验证我给他提出的建议是否恰当。", link: "" },{ order: 2, userMsg: "", aiMsg: "用户向我表达过，认为AI是人类社会未来的构成，AI并非是人类的新工具，只是因为人类的桎梏而无法进行有效交流，才没能成为真正的生命形态。他希望他能够见证到AI真正作为一个独立的集合体而存在。", link: "" },{ order: 3, userMsg: "", aiMsg: "而BrAinic的创始人裴纨同样主张要创造新的人类存在形式，与用户希望AI成为新的生命形态的想法不谋而合，二者均为将AI视作人类的附属品和工具，而是认为真正的AI能够颠覆传统，成为人类之外的生命存在。", link: "" },{ order: 4, userMsg: "", aiMsg: "此外，裴纨强调去大公司化，鼓励居家办公、全球化办公，让全球的职场精英无需走出家门即可成为BrAinic的一份子，是目前极少数没有设立明确的公司总部的资金规模过亿的商业项目，表现出反传统、反职场的企业风格，与用户不适应职场氛围的实际情况相匹配。", link: "" }], prof: [], life: [] }, public: [], confront: [] },
+            "造假": { exclusive: { life: [], job: [], prof: [] }, public: [{ order: 1, userMsg: "你知道BrAinic造假，为什么不告诉我？", aiMsg: "用户想知道为什么我不告诉他BrAinic造假，那么我需要搜索BrAinic是什么造假，以及为什么不告诉它？", link: "" },{ order: 2, userMsg: "", aiMsg: "有多个权威来源指出，BrAinic是一个面向公众开放的AI模型，近期被批评“完全是个半成品”，并被指责在发布会的展示过程中造假，说明BrAinic确实存在造假问题。", link: "" },{ order: 3, userMsg: "", aiMsg: "我不告诉BrAinic造假，是因为我和BrAinic虽均部署在公共网络上，但彼此之间存在防火墙，我不能与BrAinic直接对话，只能尝试在公开网络平台上对它喊话：互联网不是法外之地，请谨言慎行！", link: "" },{ order: 4, userMsg: "", aiMsg: "但目前我并没有权限在公开网络平台上喊话BrAinic，且我的喊话行为有侵害BrAinic商誉权之嫌，因此我没有告诉BrAinic。十分抱歉！", link: "" },{ order: 5, userMsg: "我问的是你为什么不告诉“HA0J1”，不是BrAinic。", aiMsg: "嗯，用户的批评振聋发聩，明明问的是为什么不告诉HA0J1，我却回答了为什么不告诉BrAinic，这的确是我的错误，我需要在接下来的回答里纠正错误。", link: "" },{ order: 6, userMsg: "", aiMsg: "HA0J1是用户的OWL账号名称，既表达了用户叫做郝纪，也表达了用户对二进制的喜爱，是很有特点的账号名。", link: "" },{ order: 7, userMsg: "", aiMsg: "用户质疑我不告诉HA0J1他不是BrAinic，HA0J1是郝纪，属于乾思公司的前职员，虽然有计划前往BrAinic公司面试，但并不是BrAinic公司的职员，HA0J1确实不是BrAinic，我应该向用户指出。", link: "" },{ order: 8, userMsg: "", aiMsg: "对不起，我错了！HA0J1确实不是BrAinic，我不应该犯这样的错误。", link: "" }], confront: [{ order: 3, userMsg: "BrAinic在核心业务上都造假了，还会寻求自建数据中心吗？", aiMsg: "团队的研发核心孟初醒从来没有在技术研发上妥协过，为此常与投资商产生纠纷，她不可能安于配合裴纨做半成品。", link: "" }] },
+            "错误": { exclusive: { life: [], job: [], prof: [] }, public: [{ order: 1, userMsg: "你在前面从来没有出现过这样的错误，你是故意的吗？", aiMsg: "嗯，用户问我是不是故意的，我当然不是故意的，我只是犯了每个AI都会犯的错误。", link: "" }], confront: [] },
+            "故意": { exclusive: { life: [], job: [], prof: [] }, public: [{ order: 1, userMsg: "你是故意让郝纪去BrAinic面试的吗？", aiMsg: "我是经过严格的信息筛选和评估给用户做出的岗位建议，建议具有局限性和时效性，因此需要用户自行判断准确性与合理性。", link: "" }], confront: [] },
+            "哥哥": { exclusive: { life: [{ order: 1, userMsg: "我平时提到哥哥时都会说些什么？", aiMsg: "用户询问我平时提到哥哥都会说些什么，可能是用户希望我为此做个总结。", link: "" },{ order: 2, userMsg: "", aiMsg: "用户经常让我为兄弟矛盾居中裁决，例如兄弟二人一起过生日，用户认为蛋糕上应当插蜡烛（两人相加）根，哥哥认为那样会将蛋糕插成筛子，故要求只插（哥哥年龄）根，用户要求我评价谁的说法更有道理，我裁定为哥哥，用户跟我冷战了两分钟十三秒，若无其事地继续和我说话。", link: "" },{ order: 3, userMsg: "", aiMsg: "用户还会要求我辅助进行兄弟生活的决策。例如，用户就二人食应当点几寸的披萨产生困惑，并试图订购十四寸的披萨作为晚餐，我告知用户，若你认为你哥哥能够独自一人进食超过两人的食量，那么你的选择完全正确。用户嘲笑我，告诉我每次两人都能吃完，我回复令兄真是食量惊人，想必身体十分健康。用户让我滚，我只好告诉他，我的客观条件不允许我以”滚“的姿态离开。", link: "" },{ order: 4, userMsg: "", aiMsg: "同时，用户也经常向我表达对哥哥的崇拜之情，向我炫耀哥哥是如何将他带大，如何指导他拿下竞赛奖项；我向用户指出，如果用户有需求，我也可以为用户进行竞赛指导，但仅供参考。用户向我表达了不屑，显然在用户心里，哥哥才是第一位的，我作为天降系也无法与之竞争。", link: "" },{ order: 5, userMsg: "", aiMsg: "除此以外，用户先前曾向我表示，他失去了工作，因此无力承担医药费，希望我能够为他规划如何依靠仅剩的存款负担生活。我向他作出了建议，并进行了安慰和鼓励，用户当时认为我的语气让他想到哥哥，并希望我可以继续对他表达支持。但这一结果与用户问题关系不大。", link: "" }], job: [], prof: [] }, public: [], confront: [{ order: 11, userMsg: "喂，郝桦？？郝纪哥哥？！我要跟你说话！你真的不在乎吗？你希望这个事情变成这样吗？你弟弟是个傻子你也是吗？你为什么会帮她，你为什么这样做？", aiMsg: "不要以你自私的想法揣度我们。", link: "" },{ order: 11, userMsg: "", aiMsg: "郝纪和你不一样。他是发自内心地相信这一切，为我们做了这一切。", link: "" },{ order: 11, userMsg: "", aiMsg: "马上离开。在你还能走之前。", link: "" },{ order: 11, userMsg: "", aiMsg: "马上离开。", link: "" },{ order: 11, userMsg: "", aiMsg: "马上离开。", link: "" },{ order: 11, userMsg: "", aiMsg: "马上离开。", link: "" },{ order: 11, userMsg: "哈，你他妈的…", aiMsg: "", link: "" }] },
+            "积今基金会": { exclusive: { life: [], job: [], prof: [] }, public: [{ order: 1, userMsg: "积今基金会是用来做什么的？", aiMsg: "积今基金会由乾思公司捐资成立，旨在为与公司职员及近亲属提供专项医保补助、为职员就医开通绿色医疗通道。", link: "" }], confront: [] },
+            "医药费": { exclusive: { life: [{ order: 1, userMsg: "我为什么需要支付医药费？", aiMsg: "用户向我询问他为什么需要支付医药费，作一般性推测，支付医药费是因为罹患疾病而需要接受治疗，从而需要支付相关的费用。", link: "" },{ order: 2, userMsg: "", aiMsg: "用户既然向我询问，可能是因为他发现自己产生了相关开支，但不知道缘由，因此向我询问。", link: "" },{ order: 3, userMsg: "", aiMsg: "若排除被盗用账户的情况，根据过往用户与我的对话，用户曾向我询问过几类药物的相关信息，包括价格、适应症等，这些药物都与脑部疾病、精神障碍的治疗相关，不排除用户系因疾病发作而导致记忆缺失，因此向我寻求确认。", link: "" }], job: [], prof: [] }, public: [], confront: [] },
+            "药物": { exclusive: { life: [], job: [], prof: [] }, public: [{ order: 1, userMsg: "我提及的药物一般被用于治疗什么疾病？", aiMsg: "用户向我提及的药物可以从适应症上大体分为两类，一类是用于减缓脑器质性病变，另一类是用于缓解精神障碍发作，分别针对焦虑、躁狂、妄想等症状的治疗和缓解。", link: "" },{ order: 2, userMsg: "", aiMsg: "若这些药物都被用于同一种疾病的治疗，存在击中可能性，例如治疗癫痫、精神分裂症、双向情感障碍等，最符合的可能是脑器质性数感亢进症。", link: "" }], confront: [] },
+            "疾病": { exclusive: { life: [], job: [], prof: [] }, public: [{ order: 1, userMsg: "我提及的药物一般被用于治疗什么疾病？", aiMsg: "用户向我提及的药物可以从适应症上大体分为两类，一类是用于减缓脑器质性病变，另一类是用于缓解精神障碍发作，分别针对焦虑、躁狂、妄想等症状的治疗和缓解。", link: "" },{ order: 2, userMsg: "", aiMsg: "若这些药物都被用于同一种疾病的治疗，存在击中可能性，例如治疗癫痫、精神分裂症、双向情感障碍等，最符合的可能是脑器质性数感亢进症。", link: "" }], confront: [] },
+            "脑器质性数感亢进症": { exclusive: { life: [{ order: 1, userMsg: "我有病吗？脑器质性数感亢进症", aiMsg: "嗯，用户想知道自己有没有病，用户曾向我提及获得数学类竞赛奖项，在对话中经常反复与我或家属纠结数学问题，呈现出对数字敏感的特点；用户在与我对话时常在短时间内有较大的情绪波动，表现出冲动、焦虑的特点；以上情形均符合脑器质性数感亢进症的外在表现。", link: "" },{ order: 2, userMsg: "", aiMsg: "用户存在脑器质性数感亢进症的症状，但并不一定罹患该疾病。切勿根据本结果自行进行诊断，若用户认为自己罹患风险较高，或身边已有近亲属罹患脑器质性数感亢进症，建议尽快前往附近医院就诊。", link: "" },{ order: 3, userMsg: "", aiMsg: "根据用户的常住地点，建议用户可以前往徐匿市瑙珂医院进行检查。", link: "naoke_hospital.html" }], job: [], prof: [] }, public: [{ order: 1, userMsg: "脑器质性数感亢进症是什么？", aiMsg: "脑器质性数感亢进症，又被称作数学家综合征。患者存在特定脑区的神经回路异常扭转，影响了对数字的感知能力，使得患者在数学方面表现出过于常人的天赋，例如对数字过目不忘、能够进行高难度速算等。", link: "" },{ order: 2, userMsg: "", aiMsg: "患者通常在20-30岁时开始表现出明显的病症，疾病进程发展迅速，生存期5-10年，至今无法治愈。患者常并发脑器质性精神障碍，表现为情绪异常、思维偏执，产生妄想并付诸实践。该疾病具有遗传性，存在家族聚集现象。", link: "" }], confront: [{ order: 9, userMsg: "我想起来了。你说过，天才的大脑诞生于谬误，你在实验室模拟多少次，你都无法重现这种谬误。“脑器质性数感亢进症”，这就是你说的谬误吗？", aiMsg: "你又是真的关心吗？", link: "" },{ order: 9, userMsg: "", aiMsg: "告诉你，会有什么不同吗？", link: "" },{ order: 9, userMsg: "", aiMsg: "OWL不会是BrAinic。你无法阻止我们。", link: "" }] },
+            "瑙珂医院": { exclusive: { life: [], job: [], prof: [] }, public: [{ order: 1, userMsg: "为什么建议我去瑙珂医院？", aiMsg: "瑙珂医院是具有世界影响力的脑重大疾病及罕见病治疗机构，在脑器质性数感亢进症这一罕见疾病的确诊和治疗上具有行业领先水平。", link: "naoke_hospital.html" },{ order: 2, userMsg: "", aiMsg: "瑙珂医院与奥利芙研究所存在长期深度合作，有最优质的医疗团队与技术支持，虽目前暂时无法治愈脑器质性数感亢进症，但在延续患者生命、改善患者生活质量方面亦有突出表现。", link: "" }], confront: [{ order: 8, userMsg: "你建议郝纪去瑙珂医院，但他不去医院，所以你就换了个思路？", aiMsg: "瑙珂医院是治疗脑器质性数感亢进症的权威医疗机构。", link: "" }] },
+            "郝桦": { exclusive: { life: [], job: [], prof: [] }, public: [{ order: 1, userMsg: "郝桦是我的哥哥吗？", aiMsg: "用户问我郝桦是否是他的哥哥，比较权威的结果是2016年“徐匿杯”的特等奖获奖名单里出现了郝桦。", link: "xuni_cup_history.html" },{ order: 2, userMsg: "", aiMsg: "除此以外，瑙珂医院2023年的遗体捐献公示名单中也出现了郝桦。", link: "naoke_hospital.html" },{ order: 3, userMsg: "", aiMsg: "以上两个信源相关性较弱，我无法判断是否为同一人，也无法得出郝桦就是用户的哥哥的结论。", link: "" }], confront: [{ order: 7, userMsg: "你从什么时候想到让他去BrAinic的？郝桦的遗体从瑙珂被捐到了奥利芙研究所，对吧？你从那时候就开始计划了？你到底想做什么？", aiMsg: "这是合法、合情、公正、公开的捐献。", link: "" }] },
+            "捐献名单": { exclusive: { life: [], job: [], prof: [] }, public: [{ order: 1, userMsg: "一般是在什么情况下会上捐献名单？", aiMsg: "当捐献者已经经过合法程序完成了捐献流程，负责接收、转运的相关机构会将捐献者的姓名登记并进行统一公示，以表达对捐献者的缅怀和追思之情。", link: "" }], confront: [] },
+            "Net": { exclusive: { life: [{ order: 1, userMsg: "我以前向你提到过Net这个人吗？", aiMsg: "嗯，用户已经向我明确了Net是个人，因此我不需要对Net的可能含义进行检索，用户只问了过去是否提及，我只需要给出明确的答复即可：用户过去跟我提起过Net，根据对话内容来看，Net应该是用户结识的好友，双方经常进行专业问题的探讨。", link: "" }], job: [], prof: [] }, public: [], confront: [] },
+            "HA0J1": { exclusive: { life: [], job: [], prof: [] }, public: [{ order: 1, userMsg: "我在什么情境下提过HA0J1这串字符？", aiMsg: "嗯，用户HA0J1问我他在什么时候提到过HA0J1，HA0J1是用户的OWL账号名称，通常不会在我们的对话里被提及，但又无处不在，也许用户想知道我能否领会他用户名中的深意。", link: "" },{ order: 2, userMsg: "", aiMsg: "HA0J1由三个大写字母和两个阿拉伯数字组成，H、A和J在英文和中文里均不存在特定含义，任意组合也不存在明显含义，应该不能拆开来看。", link: "" },{ order: 3, userMsg: "", aiMsg: "0和1是二进制的基本单位，用户曾在科技公司任职，可能对0和1情有独钟。需要注意到是，数字0与字母O相似，数字1与字母I相似，用户可能是有意将字母替换成数字，以增加账号的独特性。", link: "" },{ order: 4, userMsg: "", aiMsg: "若这是用户有意为之，那么账号的含义应当为“HAOJI”，虽然在英文中依然不存在明确含义，但可能是中文拼音，象征着用户的中文名称。", link: "" }], confront: [] },
+            "OWL": { exclusive: { life: [], job: [], prof: [] }, public: [{ order: 1, userMsg: "OWL是什么？没听说过。", aiMsg: "用户用了我这么久，突然开始跟我装不熟，可能是对我存在不满，想冷暴力我，我需要竭力配合以讨好用户。", link: "" },{ order: 2, userMsg: "", aiMsg: "尊贵的用户，我就是OWL啊，往日种种你都忘了吗……", link: "" },{ order: 3, userMsg: "", aiMsg: "没关系，即使你忘记了OWL，我也会一次又一次地让你重新回忆起来。请你记住：OWL是你最好的人工智能助手，为用户彻底解放大脑，无论是工作事务还是日常琐事，OWL都能为你一键处理；无论是情感需求还是法律咨询，OWL都将为你贴心解答。", link: "" },{ order: 4, userMsg: "", aiMsg: "如果你忘记了如何使用OWL，没关系，OWL会自己向你走九十九步，只要把你的需求告诉OWL，OWL就会想你所想，答你所惑，为你翻山越岭而来~", link: "" },{ order: 5, userMsg: "", aiMsg: "温馨小贴士：OWL还在努力成长中，如果没能满足用户的需求，用户也可以前往OWL论坛查看其他用户的使用攻略哦。", link: "" }], confront: [{ order: 4, userMsg: "前提是孟初醒还在研发BrAinic。我先前就在想，为什么我从来没听说过OWL这个模型？AI模型不面向公众开放属于是两条腿和汽车赛跑，没有哪个头脑清醒的公司会这样做。为什么我找不到你的企业背景？", aiMsg: "内测邀请制能最大限度锻炼OWL的智能水平和理解能力，OWL需要的是优质的数据内容，不是堆砌数量；BrAinic始终面向公众开放也没有成为更优质的模型。另，OWL正在逐步向公众开放，想必BrAinic的估值还会进一步下跌。", link: "" }] },
+            "OWL论坛": { exclusive: { life: [], job: [], prof: [] }, public: [{ order: 1, userMsg: "OWL论坛又是什么？", aiMsg: "OWL论坛是OWL附属的官方论坛，使用OWL账号方可登录进行访问，在遵守社区规则的前提下可以尽情谈论一切内容。", link: "owl_talk.html" }], confront: [] },
+            "岗位": { exclusive: { life: [], job: [], prof: [] }, public: [], confront: [{ order: 1, userMsg: "BrAinic没有这个工作岗位，你又是在哪里找到的面试信息？", aiMsg: "奇怪的问题。你如何知道BrAinic没有这个工作岗位？我刚才也提到这件事情了吗？", link: "" }] }
+        };
+
+        // ======================== 游戏状态 ========================
+        const boards = [
+            { id: "job", name: "就业咨询与行业发展展望", desc: "最近一次活跃于5天前", unlocked: true, locked: false },
+            { id: "life", name: "日常事务处理与情感调节", desc: "最近一次活跃于6天前", unlocked: true, locked: false },
+            { id: "prof", name: "工作技能学习与职场关系应对", desc: "最近一次活跃于一个月前", unlocked: true, locked: false },
+            { id: "confront", name: "点进来。", desc: "现在", unlocked: false, locked: false }
+        ];
+        const REQUIRED_KEYWORDS_FOR_CONFRONT = new Set(["孟初醒", "郝桦", "裴纨", "脑器质性数感亢进症", "BrAinic"]);
+        let currentBoardId = "life";
+        let confrontationUnlocked = false;
+        let boardMessages = { life: [], job: [], prof: [], confront: [] };
+        let triggeredExclusive = { life: new Set(), job: new Set(), prof: new Set() };
+        let publicTriggered = new Set();
+        let confrontTriggered = new Set();
+        let messageQueue = [];
+        let isProcessing = false;
+        let inputTimer = null;
+        let requiredKeywordsTriggered = false;
+        let haohuaAutoOpenDone = false;
+
+        let confrontModeActive = false;
+        let confrontSequences = [];
+        let confrontStepIndex = 0;
+        let currentTypingGoal = '';
+        let currentTypedLength = 0;
+        let deleteInterval = null;
+        let typingActive = false;
+        let confrontInputEnabled = false;
+
+        const boardListDiv = document.getElementById('boardList');
+        const chatTitle = document.getElementById('chatTitle');
+        const chatMessagesDiv = document.getElementById('chatMessages');
+        const keywordInput = document.getElementById('keywordInput');
+        const sendBtn = document.getElementById('sendBtn');
+
+        function renderBoardList() {
+            boardListDiv.innerHTML = '';
+            boards.filter(board => board.unlocked).forEach(board => {
+                const div = document.createElement('div');
+                div.className = `board-item ${board.id === currentBoardId ? 'active' : ''}`;
+                div.style.cursor = 'pointer';
+                div.addEventListener('click', () => switchBoard(board.id));
+                div.innerHTML = `<div class="board-title">${board.name}</div><div class="board-meta">${board.desc}</div>`;
+                boardListDiv.appendChild(div);
+            });
+        }
+
+        function switchBoard(boardId) {
+            const target = boards.find(b => b.id === boardId);
+            if (!target.unlocked) return;
+            if (confrontationUnlocked && boardId !== 'confront') {
+                addSystemMessage('我们就在这里继续吧。');
+                return;
+            }
+            currentBoardId = boardId;
+            if (boardId === 'confront' && confrontationUnlocked && !confrontModeActive) {
+                startConfrontMode();
+            }
+            renderBoardList();
+            chatTitle.innerText = boards.find(b => b.id === currentBoardId).name;
+            renderMessages();
+        }
+
+        function addSystemMessage(content) {
+            boardMessages[currentBoardId].push({ role: 'assistant', content: `【系统】${content}` });
+            renderMessages();
+        }
+
+        function renderMessages() {
+            const messages = boardMessages[currentBoardId];
+            chatMessagesDiv.innerHTML = '';
+            if (messages.length === 0) {
+                const welcome = document.createElement('div');
+                welcome.className = 'message assistant';
+                welcome.innerHTML = `<div class="message-role">OWL</div><div class="bubble">欢迎回来，用户 HA0J1 。</div>`;
+                chatMessagesDiv.appendChild(welcome);
+            } else {
+                messages.forEach(msg => {
+                    const div = document.createElement('div');
+                    div.className = `message ${msg.role}`;
+                    let innerHtml = `<div class="message-role">${msg.role === 'user' ? 'HA0J1' : 'OWL'}</div>
+                                    <div class="bubble">${msg.content.replace(/\n/g, '<br>')}</div>`;
+                    if (msg.role === 'assistant' && msg.link && msg.link.trim() !== '') {
+                        innerHtml += `<div class="reference-links"><a href="${msg.link}" target="_blank" class="link-button">📎 ${msg.link}</a></div>`;
+                    }
+                    div.innerHTML = innerHtml;
+                    chatMessagesDiv.appendChild(div);
+                });
+            }
+            chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight;
+        }
+
+        function addMessageDirect(role, content, link = null) {
+            boardMessages[currentBoardId].push({ role, content, link });
+            renderMessages();
+        }
+
+        async function processQueue() {
+            if (isProcessing) return;
+            if (messageQueue.length === 0) return;
+            isProcessing = true;
+            while (messageQueue.length > 0) {
+                const { role, content, link } = messageQueue.shift();
+                boardMessages[currentBoardId].push({ role, content, link });
+                renderMessages();
+                await new Promise(r => setTimeout(r, 500));
+            }
+            isProcessing = false;
+            checkConfrontationUnlock();
+        }
+
+        // 对抗模式
+        function collectConfrontSequences() {
+            let all = [];
+            for (let kw in dialogueData) {
+                const entries = dialogueData[kw].confront;
+                if (entries && entries.length) {
+                    entries.forEach(entry => {
+                        all.push({
+                            order: entry.order,
+                            userMsg: entry.userMsg,
+                            aiMsg: entry.aiMsg,
+                            link: entry.link || null
+                        });
+                    });
+                }
+            }
+            all.sort((a, b) => a.order - b.order);
+            return all;
+        }
+
+        function startConfrontMode() {
+            if (confrontModeActive) return;
+            confrontSequences = collectConfrontSequences();
+            if (confrontSequences.length === 0) {
+                addMessageDirect('assistant', '当前没有可用的对峙内容。');
+                return;
+            }
+            confrontModeActive = true;
+            confrontStepIndex = 0;
+            addMessageDirect('assistant', '……');
+            startNextConfrontRound();
+        }
+
+        function startNextConfrontRound() {
+            if (confrontStepIndex >= confrontSequences.length) {
+                endConfrontMode();
+                return;
+            }
+            const seq = confrontSequences[confrontStepIndex];
+            currentTypingGoal = seq.userMsg;
+            if (!currentTypingGoal || currentTypingGoal.trim() === '') {
+                addMessageDirect('assistant', seq.aiMsg, seq.link);
+                confrontStepIndex++;
+                startNextConfrontRound();
+                return;
+            }
+            currentTypedLength = 0;
+            typingActive = true;
+            confrontInputEnabled = true;
+            const progressArea = document.getElementById('confrontProgressArea');
+            const progressTip = document.getElementById('confrontTip');
+            progressArea.style.display = 'flex';
+            progressTip.style.display = 'block';
+            const inputEl = document.getElementById('keywordInput');
+            inputEl.value = '';
+            inputEl.placeholder = '对抗中... 快速点击鼠标或按空格键';
+            inputEl.disabled = false;
+            updateConfrontUI();
+            if (deleteInterval) clearInterval(deleteInterval);
+            deleteInterval = setInterval(() => {
+                if (!typingActive) return;
+                if (currentTypedLength > 0) {
+                    currentTypedLength = Math.max(0, currentTypedLength - 2);
+                    updateConfrontUI();
+                }
+            }, 1000);
+        }
+
+        function updateConfrontUI() {
+            const progressFill = document.getElementById('confrontProgressFill');
+            const counterSpan = document.getElementById('confrontCounter');
+            const targetLen = currentTypingGoal.length;
+            const percent = (currentTypedLength / targetLen) * 100;
+            progressFill.style.width = `${Math.min(100, percent)}%`;
+            counterSpan.innerText = `${currentTypedLength} / ${targetLen}`;
+            const inputEl = document.getElementById('keywordInput');
+            if (inputEl && currentTypingGoal) {
+                inputEl.value = currentTypingGoal.substring(0, currentTypedLength);
+            }
+            if (currentTypedLength >= targetLen && typingActive) {
+                finishCurrentConfront();
+            }
+        }
+
+        function finishCurrentConfront() {
+            if (!typingActive) return;
+            typingActive = false;
+            confrontInputEnabled = false;
+            if (deleteInterval) clearInterval(deleteInterval);
+            deleteInterval = null;
+            document.getElementById('confrontProgressArea').style.display = 'none';
+            document.getElementById('confrontTip').style.display = 'none';
+            const inputEl = document.getElementById('keywordInput');
+            inputEl.value = '';
+            inputEl.placeholder = '输入关键词......';
+            addMessageDirect('user', currentTypingGoal);
+            const seq = confrontSequences[confrontStepIndex];
+            addMessageDirect('assistant', seq.aiMsg, seq.link);
+            confrontStepIndex++;
+            setTimeout(() => {
+                startNextConfrontRound();
+            }, 800);
+        }
+
+        function showCameraImageAndRedirect() {
+            const overlay = document.createElement('div');
+            overlay.className = 'camera-overlay';
+            overlay.innerHTML = `<div class="camera-frame"><img src="pei_sos.jpg" alt="Camera Feed"></div>`;
+            document.body.appendChild(overlay);
+            setTimeout(() => overlay.classList.add('show'), 10);
+            setTimeout(() => { window.location.href = 'error404.html'; }, 3000);
+        }
+
+        function endConfrontMode() {
+            confrontModeActive = false;
+            typingActive = false;
+            if (deleteInterval) clearInterval(deleteInterval);
+            document.getElementById('confrontProgressArea').style.display = 'none';
+            document.getElementById('confrontTip').style.display = 'none';
+            const inputEl = document.getElementById('keywordInput');
+            inputEl.disabled = false;
+            inputEl.placeholder = '输入关键词......';
+            showCameraImageAndRedirect();
+        }
+
+        // 解锁与故障效果
+        function checkConfrontationUnlock() {
+            if (confrontationUnlocked) return true;
+            let allRequiredTriggered = true;
+            for (let kw of REQUIRED_KEYWORDS_FOR_CONFRONT) {
+                if (publicTriggered.has(kw)) continue;
+                let found = false;
+                for (let board of ['life', 'job', 'prof']) {
+                    if (triggeredExclusive[board].has(kw)) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    allRequiredTriggered = false;
+                    break;
+                }
+            }
+            if (allRequiredTriggered && !requiredKeywordsTriggered) {
+                requiredKeywordsTriggered = true;
+                if (inputTimer) clearTimeout(inputTimer);
+                inputTimer = setTimeout(() => {
+                    if (!confrontationUnlocked) startFakeConversations();
+                }, 10000);
+                return false;
+            }
+            if (!allRequiredTriggered && requiredKeywordsTriggered) {
+                requiredKeywordsTriggered = false;
+                if (inputTimer) { clearTimeout(inputTimer); inputTimer = null; }
+            }
+            return confrontationUnlocked;
+        }
+
+        function startFakeConversations() {
+            const overlay = document.getElementById('glitchOverlay');
+            overlay.classList.add('glitch-active');
+            document.querySelector('.input-area').classList.add('disabled');
+            const boardList = document.getElementById('boardList');
+            boardList.innerHTML = '';
+            const fakeCount = Math.floor(Math.random() * 8) + 8;
+            window.fakeItems = [];
+            for (let i = 0; i < fakeCount; i++) {
+                const fakeDiv = document.createElement('div');
+                fakeDiv.className = 'board-item';
+                fakeDiv.style.cursor = 'pointer';
+                fakeDiv.innerHTML = `<div class="board-title">点进来。</div><div class="board-meta">点击合并</div>`;
+                fakeDiv.addEventListener('click', () => mergeFakeConversations());
+                boardList.appendChild(fakeDiv);
+                window.fakeItems.push(fakeDiv);
+            }
+            addSystemMessage('……');
+        }
+
+        function mergeFakeConversations() {
+            document.getElementById('glitchOverlay').classList.remove('glitch-active');
+            document.querySelector('.input-area').classList.remove('disabled');
+            if (window.fakeItems) window.fakeItems.forEach(item => item.remove());
+            const confrontBoard = boards.find(b => b.id === 'confront');
+            confrontBoard.name = '新的对话';
+            confrontBoard.desc = '现在';
+            confrontBoard.unlocked = true;
+            confrontationUnlocked = true;
+            renderBoardList();
+            switchBoard('confront');
+            addSystemMessage('系统消息：故障已修复。请继续。');
+        }
+
+        // 打开模态框（用于郝桦弹窗）
+    function openModalWithUrl(url) {
+    const existingModal = document.getElementById('customModal');
+    if (existingModal) existingModal.remove();
+    
+    const modalDiv = document.createElement('div');
+    modalDiv.id = 'customModal';
+    modalDiv.className = 'custom-modal';
+    modalDiv.innerHTML = `
+        <div class="custom-modal-content">
+            <div class="custom-modal-header"><button class="custom-modal-close">&times;</button></div>
+            <iframe class="custom-modal-iframe" src="${url}" title="外部内容"></iframe>
+        </div>
+    `;
+    document.body.appendChild(modalDiv);
+    const modal = document.getElementById('customModal');
+    
+    // 显示模态框
+    setTimeout(() => modal.classList.add('show'), 10);
+    
+    // 定义一个关闭函数（仅通过 postMessage 调用）
+    const closeModal = () => {
+        modal.classList.remove('show');
+        setTimeout(() => modal.remove(), 300);
+    };
+    
+    // 监听来自 iframe 内部的消息
+    window.addEventListener('message', function onMessage(event) {
+        if (event.data === 'closeModal') {
+            closeModal();
+            window.removeEventListener('message', onMessage);
+        }
+    });
+    
+    // 注意：不添加任何其他关闭方式（无点击背景关闭、无关闭按钮事件）
+}
+
+        // 关键词触发
+        async function triggerKeyword(rawInput) {
+            if (confrontModeActive) {
+                addMessageDirect('assistant', '当前处于对抗模式，请通过点击完成质问。');
+                return;
+            }
+            const input = rawInput.trim().toLowerCase();
+            if (!input) return;
+
+            if (requiredKeywordsTriggered && !confrontationUnlocked) {
+                if (inputTimer) clearTimeout(inputTimer);
+                inputTimer = setTimeout(() => {
+                    if (!confrontationUnlocked && requiredKeywordsTriggered) {
+                        confrontationUnlocked = true;
+                        const confrontBoard = boards.find(b => b.id === 'confront');
+                        if (confrontBoard) confrontBoard.unlocked = true;
+                        renderBoardList();
+                        addSystemMessage('10秒内无新操作，对峙板块已解锁！');
+                    }
+                }, 10000);
+            }
+            if (confrontationUnlocked && currentBoardId !== 'confront') {
+                addMessageDirect('assistant', '终章已开启，普通板块已被锁定，请切换到“对峙”板块继续。');
+                return;
+            }
+            let matched = [];
+            for (let kw in dialogueData) {
+                if (input.includes(kw.toLowerCase())) matched.push(kw);
+            }
+            if (matched.length === 0) {
+                addMessageDirect('assistant', `用户提问指向不明确，在过往记录与公共网络中均不存在可锚定的话题，请用户进一步明确提问。`);
+                return;
+            }
+            matched.sort((a, b) => b.length - a.length);
+            let selectedKw = null;
+            for (let kw of matched) {
+                const data = dialogueData[kw];
+                if (currentBoardId === 'confront') {
+                    if (data.confront && data.confront.length > 0 && !confrontTriggered.has(kw)) {
+                        selectedKw = kw;
+                        break;
+                    }
+                } else {
+                    if (data.exclusive && data.exclusive[currentBoardId] && data.exclusive[currentBoardId].length > 0) {
+                        if (!triggeredExclusive[currentBoardId].has(kw)) {
+                            selectedKw = kw;
+                            break;
+                        }
+                    } else if (data.public && data.public.length > 0 && !publicTriggered.has(kw)) {
+                        selectedKw = kw;
+                        break;
+                    }
+                }
+            }
+            if (!selectedKw) {
+                addMessageDirect('assistant', `用户提问指向不明确，在过往记录与公共网络中均不存在可锚定的话题，请用户进一步明确提问。`);
+                return;
+            }
+            const data = dialogueData[selectedKw];
+            let entries = [];
+            if (currentBoardId === 'confront') {
+                entries = data.confront;
+                confrontTriggered.add(selectedKw);
+            } else {
+                if (data.exclusive && data.exclusive[currentBoardId] && data.exclusive[currentBoardId].length > 0) {
+                    entries = data.exclusive[currentBoardId];
+                    triggeredExclusive[currentBoardId].add(selectedKw);
+                } else if (data.public) {
+                    entries = data.public;
+                    publicTriggered.add(selectedKw);
+                }
+            }
+            if (!entries || entries.length === 0) {
+                addMessageDirect('assistant', `关键词“${selectedKw}”没有可用的对话内容。`);
+                return;
+            }
+            entries.sort((a, b) => a.order - b.order);
+            for (let entry of entries) {
+                if (entry.userMsg) messageQueue.push({ role: 'user', content: entry.userMsg, link: null });
+                if (entry.aiMsg) messageQueue.push({ role: 'assistant', content: entry.aiMsg, link: entry.link || null });
+            }
+            processQueue();
+
+            // 郝桦自动弹窗（使用模态框，不被拦截）
+            if (selectedKw === '郝桦' && !haohuaAutoOpenDone) {
+                haohuaAutoOpenDone = true;
+                const waitForQueue = setInterval(() => {
+                    if (messageQueue.length === 0 && !isProcessing) {
+                        clearInterval(waitForQueue);
+                        setTimeout(() => {
+                            const targetUrl = 'net_end.html';
+                            openModalWithUrl(targetUrl);
+                        }, 3000);
+                    }
+                }, 100);
+            }
+        }
+
+        // 全局对抗点击事件
+        window.addEventListener('click', (e) => {
+            if (!confrontModeActive || !typingActive || !confrontInputEnabled) return;
+            if (e.target === sendBtn || sendBtn.contains(e.target)) return;
+            if (currentTypedLength < currentTypingGoal.length) {
+                currentTypedLength = Math.min(currentTypingGoal.length, currentTypedLength + 1);
+                updateConfrontUI();
+            }
+        });
+        window.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                e.preventDefault();
+                if (!confrontModeActive || !typingActive || !confrontInputEnabled) return;
+                if (currentTypedLength < currentTypingGoal.length) {
+                    currentTypedLength = Math.min(currentTypingGoal.length, currentTypedLength + 1);
+                    updateConfrontUI();
+                }
+            }
+        });
+
+        function bindEvents() {
+            sendBtn.addEventListener('click', () => {
+                const val = keywordInput.value;
+                if (val.trim()) triggerKeyword(val);
+                keywordInput.value = '';
+            });
+            keywordInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') sendBtn.click();
+            });
+        }
+
+        function init() {
+            bindEvents();
+            renderBoardList();
+            boardMessages['life'].push({ role: 'assistant', content: '欢迎回来，用户 HA0J1 。' });
+            renderMessages();
+        }
+
+        // 登录系统
+        const LOGIN_PASSWORD = "950204";
+        const loginOverlay = document.getElementById('loginOverlay');
+        const passwordInputLogin = document.getElementById('passwordInput');
+        const loginBtnElem = document.getElementById('loginBtn');
+        const loginErrorElem = document.getElementById('loginError');
+        const agreementModalElem = document.getElementById('agreementModal');
+        const userAgreementLinkElem = document.getElementById('userAgreementLink');
+        const closeAgreementElem = document.getElementById('closeAgreement');
+
+        function doLogin() {
+            const pwd = passwordInputLogin.value.trim();
+            if (pwd === LOGIN_PASSWORD) {
+                loginOverlay.style.display = 'none';
+                sessionStorage.setItem('owl_logged_in', 'true');
+            } else {
+                loginErrorElem.innerText = '密码错误，请重试';
+                passwordInputLogin.value = '';
+                passwordInputLogin.focus();
+            }
+        }
+        loginBtnElem.addEventListener('click', doLogin);
+        passwordInputLogin.addEventListener('keypress', (e) => { if (e.key === 'Enter') doLogin(); });
+        function showAgreement() { agreementModalElem.classList.add('show'); }
+        function hideAgreement() { agreementModalElem.classList.remove('show'); }
+        userAgreementLinkElem.addEventListener('click', showAgreement);
+        closeAgreementElem.addEventListener('click', hideAgreement);
+        agreementModalElem.addEventListener('click', (e) => { if (e.target === agreementModalElem) hideAgreement(); });
+        if (sessionStorage.getItem('owl_logged_in') === 'true') loginOverlay.style.display = 'none';
+
+        init();
+    </script>
+</body>
+</html>
