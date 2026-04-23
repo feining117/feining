@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>乾思科技有限公司</title>
+  <style>
+    :root{
+      --bg1:#eef3fb;
+      --bg2:#f6f8fc;
+      --bg3:#f8fafd;
+      --card1:rgba(252,253,255,0.90);
+      --card2:rgba(244,247,252,0.88);
+      --hero1:rgba(225,233,247,0.95);
+      --hero2:rgba(243,247,253,0.82);
+      --hero3:rgba(222,231,245,0.90);
+      --line:#d5deed;
+      --border:rgba(255,255,255,0.75);
+      --text:#1b2433;
+      --muted:#4b5a73;
+      --blue:#193a78;
+      --blue2:#1a3c7d;
+      --shadow:0 18px 44px rgba(42,74,128,0.06);
+      --shadow-lg:0 24px 60px rgba(42,74,128,0.08);
+      --radius:22px;
+    }
+
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0}
+    body{
+      font-family: "Microsoft YaHei","PingFang SC","Noto Sans SC","Segoe UI",sans-serif;
+      color:var(--text);
+      background: linear-gradient(180deg,var(--bg1) 0%,var(--bg2) 18%,var(--bg3) 100%);
+    }
+    a{color:inherit;text-decoration:none}
+
+    .site-header{
+      position:sticky;
+      top:0;
+      z-index:20;
+      background:rgba(255,255,255,0.82);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom:1px solid rgba(212,222,237,0.85);
+    }
+    .container{
+      max-width:1480px;
+      margin:0 auto;
+      padding:0 32px;
+    }
+    .header-inner{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:20px;
+      padding:24px 0;
+    }
+    .brand-cn{
+      font-size:30px;
+      font-weight:600;
+      letter-spacing:.08em;
+      color:#111c2f;
+      line-height:1.15;
+    }
+    .brand-en{
+      margin-top:6px;
+      font-size:15px;
+      letter-spacing:.42em;
+      text-transform:uppercase;
+      color:#55657f;
+    }
+    .nav{
+      display:flex;
+      gap:56px;
+      font-size:16px;
+      color:#24324b;
+      white-space:nowrap;
+    }
+    .nav a:hover{color:#10192a}
+    .header-actions{
+      display:flex;
+      align-items:center;
+      gap:24px;
+      white-space:nowrap;
+    }
+    .btn-primary{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:16px 32px;
+      border-radius:14px;
+      background:var(--blue);
+      color:#fff;
+      font-size:16px;
+      font-weight:600;
+      box-shadow:0 10px 30px rgba(25,58,120,0.22);
+    }
+    .header-link{
+      font-size:16px;
+      color:#244684;
+    }
+
+    main{padding:28px 0 56px}
+
+    .hero{
+      position:relative;
+      overflow:hidden;
+      border-radius:28px;
+      border:1px solid var(--border);
+      background:linear-gradient(135deg,var(--hero1) 0%,var(--hero2) 45%,var(--hero3) 100%);
+      box-shadow:var(--shadow-lg);
+      margin-bottom:18px;
+    }
+    .hero::before{
+      content:"";
+      position:absolute; inset:0;
+      background:
+        radial-gradient(circle at top left, rgba(255,255,255,0.65), transparent 45%),
+        linear-gradient(135deg, rgba(255,255,255,0.24), transparent 50%),
+        linear-gradient(120deg, transparent 0%, rgba(157,182,227,0.16) 70%, rgba(180,201,236,0.22) 100%);
+      pointer-events:none;
+    }
+    .hero-inner{
+      position:relative;
+      z-index:1;
+      min-height:190px;
+      display:flex;
+      align-items:flex-end;
+      padding:40px;
+    }
+    .hero-title{
+      margin:0;
+      font-size:64px;
+      font-weight:600;
+      letter-spacing:.04em;
+      color:#17366e;
+      line-height:1.16;
+    }
+    .hero-text{
+      max-width:980px;
+      margin:24px 0 0;
+      font-size:22px;
+      line-height:2.05;
+      color:#53627a;
+    }
+
+    .card-grid{
+      display:grid;
+      grid-template-columns: 1.05fr 1.1fr 1.2fr 1fr 1fr 0.95fr;
+      gap:16px;
+      align-items:stretch;
+    }
+
+    .card{
+      position:relative;
+      overflow:hidden;
+      border-radius:var(--radius);
+      border:1px solid var(--border);
+      background:linear-gradient(180deg,var(--card1) 0%, var(--card2) 100%);
+      box-shadow:var(--shadow);
+      min-height:450px;
+    }
+    .card::before{
+      content:"";
+      position:absolute; inset:0;
+      background:linear-gradient(145deg, rgba(255,255,255,0.32) 0%, transparent 42%, rgba(173,194,229,0.14) 100%);
+      pointer-events:none;
+    }
+    .card.join{
+      background:linear-gradient(180deg, rgba(252,253,255,0.9) 0%, rgba(236,242,251,0.95) 100%);
+    }
+    .card-inner{
+      position:relative;
+      z-index:1;
+      padding:40px 32px;
+    }
+    .card h2{
+      margin:0;
+      font-size:24px;
+      font-weight:600;
+      letter-spacing:.04em;
+      color:var(--blue);
+    }
+    .accent{
+      width:48px;
+      height:2px;
+      border-radius:999px;
+      background:#9eb4dd;
+      margin-top:20px;
+    }
+    .card-content{
+      margin-top:32px;
+      color:#5a687e;
+      font-size:16px;
+      line-height:2;
+    }
+    .departments{margin:0;padding:0;list-style:none}
+    .departments li{
+      padding:20px 0;
+      border-top:1px solid rgba(213,222,237,0.9);
+      color:#24324b;
+      font-size:20px;
+      line-height:1.6;
+    }
+    .departments li:first-child{border-top:none;padding-top:0}
+    .culture-quote{
+      padding-top:24px;
+      color:var(--blue2);
+      font-size:22px;
+      font-weight:600;
+      line-height:1.8;
+    }
+    .join-box{
+      min-height:420px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .join-box .btn-primary{
+      padding:18px 40px;
+      font-size:22px;
+      box-shadow:0 16px 36px rgba(26,60,125,0.22);
+    }
+
+    .foundation{
+      margin-top:20px;
+      overflow:hidden;
+      border-radius:26px;
+      border:1px solid var(--border);
+      background:linear-gradient(180deg, rgba(247,250,254,0.92) 0%, rgba(239,244,251,0.86) 100%);
+      box-shadow:0 22px 52px rgba(42,74,128,0.06);
+    }
+    .foundation-grid{
+      display:grid;
+      grid-template-columns:320px 1.25fr 1fr;
+    }
+    .foundation-title{
+      position:relative;
+      overflow:hidden;
+      border-right:1px solid rgba(213,222,237,0.85);
+      background:linear-gradient(135deg, rgba(217,228,246,0.9) 0%, rgba(239,245,253,0.82) 100%);
+      padding:56px 40px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      min-height:220px;
+    }
+    .foundation-title::before{
+      content:"";
+      position:absolute; inset:0;
+      background:linear-gradient(135deg, rgba(255,255,255,0.35), transparent 40%, rgba(161,184,227,0.18) 100%);
+      pointer-events:none;
+    }
+    .foundation-title-inner{
+      position:relative; z-index:1; text-align:center; color:var(--blue2);
+    }
+    .foundation-cn{
+      font-size:44px;
+      font-weight:600;
+      letter-spacing:.06em;
+      line-height:1.2;
+    }
+    .foundation-en{
+      margin-top:10px;
+      font-size:15px;
+      letter-spacing:.38em;
+      color:#5c6e88;
+      text-transform:uppercase;
+    }
+    .foundation-line{
+      width:80px;height:3px;border-radius:999px;background:rgba(58,95,159,0.75);
+      margin:24px auto 0;
+    }
+    .foundation-text{
+      padding:42px 48px;
+      font-size:17px;
+      line-height:2.05;
+      color:#4d5d74;
+    }
+    .foundation-text.mid{
+      border-right:1px solid rgba(213,222,237,0.85);
+    }
+
+    @media (max-width: 1360px){
+      .nav{gap:32px;font-size:16px}
+      .header-actions{gap:16px}
+      .hero-title{font-size:52px}
+      .card-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+      .foundation-grid{grid-template-columns:1fr}
+      .foundation-title,.foundation-text.mid{border-right:none;border-bottom:1px solid rgba(213,222,237,0.85)}
+    }
+
+    @media (max-width: 960px){
+      .header-inner{flex-wrap:wrap}
+      .nav{order:3;width:100%;justify-content:space-between;gap:16px;overflow:auto;padding-top:6px}
+      .hero-title{font-size:40px}
+      .hero-text{font-size:16px}
+      .card-grid{grid-template-columns:1fr}
+      .card{min-height:auto}
+      .join-box{min-height:220px}
+      .foundation-cn{font-size:42px}
+    }
+
+    @media (max-width: 640px){
+      .container{padding:0 18px}
+      .brand-cn{font-size:22px}
+      .brand-en{font-size:12px;letter-spacing:.28em}
+      .btn-primary{padding:12px 20px;font-size:16px}
+      .header-link{font-size:16px}
+      .hero-inner{padding:28px}
+      .hero-title{font-size:30px}
+      .hero-text{font-size:16px;line-height:1.9}
+      .card-inner{padding:28px 22px}
+      .card h2{font-size:22px}
+      .card-content{font-size:16px}
+      .departments li{font-size:16px}
+      .culture-quote{font-size:20px}
+      .foundation-title,.foundation-text{padding:30px 24px}
+      .foundation-cn{font-size:34px}
+      .foundation-text{font-size:16px}
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <div class="header-inner">
+        <div class="brand">
+          <div class="brand-cn">乾思科技有限公司</div>
+          <div class="brand-en">QIANSI TECHNOLOGY</div>
+        </div>
+
+        <nav class="nav">
+          <a href="#">介绍我们</a>
+          <a href="#">在此工作</a>
+          <a href="#">业务概览</a>
+          <a href="#">企业文化</a>
+          <a href="#">近期动态</a>
+          <a href="#">加入我们</a>
+        </nav>
+
+        <div class="header-actions">
+          <a class="btn-primary" href="#">简历投递</a>
+          <a class="header-link" href="#">积今基金会</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+      <section class="hero">
+        <div class="hero-inner">
+          <div>
+            <h1 class="hero-title">乾思科技有限公司</h1>
+            <p class="hero-text">乾思科技有限公司自成立以来，十余年间专为各企业提供数据保护一条龙服务，从事前风险排除到事后挽回补救，为用户的数据安全保驾护航。</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="card-grid">
+        <article class="card">
+          <div class="card-inner">
+            <h2>介绍我们</h2>
+            <div class="accent"></div>
+            <div class="card-content">
+              乾思科技有限公司自成立以来，十余年间专为各企业提供数据保护一条龙服务，从事前风险排除到事后挽回补救，为用户的数据安全保驾护航。
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-inner">
+            <h2>在此工作</h2>
+            <div class="accent"></div>
+            <div class="card-content">
+              <ul class="departments">
+                <li>产品部门</li>
+                <li>研发部门</li>
+                <li>安全工程部门</li>
+                <li>运营维护部门</li>
+                <li>销售服务部门</li>
+              </ul>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-inner">
+            <h2>业务概览</h2>
+            <div class="accent"></div>
+            <div class="card-content">
+              乾思科技有限公司致力于为企业提供安全保护与治理解决方案，业务涵盖数据安全产品、数据风险评估与审计、智能数据检测与分析以及安全运营服务等多个领域。
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-inner">
+            <h2>企业文化</h2>
+            <div class="accent"></div>
+            <div class="card-content">
+              “安全与隐私”是乾思自创立以来最为重视的两点，毋庸置疑，自始至终。作为以数据保护为主业的企业，乾思的员工必须时刻记住两句话：
+              <div class="culture-quote">孜孜不倦保护数据安全，<br>坚定不移守卫客户隐私。</div>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-inner">
+            <h2>近期动态</h2>
+            <div class="accent"></div>
+            <div class="card-content">
+              近期，乾思正紧锣密鼓地研发最新的安全产品，其开发进程备受瞩目。安全工程部门的安全平台主管尚吉曾在公开场合“偶遇”采访，但并未透露分毫。面对公众的期待，尚吉笑言乾思的员工一向视守口如瓶为最重要的品质，如果他这个主管带头“泄密”，岂不是会动摇乾思在大家心目中的可信形象？
+            </div>
+          </div>
+        </article>
+
+        <article class="card join">
+          <div class="card-inner">
+            <h2>加入我们</h2>
+            <div class="accent"></div>
+            <div class="join-box">
+              <a class="btn-primary" href="#">简历投递</a>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <section class="foundation">
+        <div class="foundation-grid">
+          <div class="foundation-title">
+            <div class="foundation-title-inner">
+              <div class="foundation-cn">积今基金会</div>
+              <div class="foundation-en">JIJIN FOUNDATION</div>
+              <div class="foundation-line"></div>
+            </div>
+          </div>
+
+          <div class="foundation-text mid">
+            乾思科技曾捐资成立积今基金会，为其员工及其家属的重大伤病提供医疗资金援助，基金会已与瑙珂医院等徐匿市著名医疗救助体系有效衔接。截止2025年，针对员工的援助金额已突破1000万。
+          </div>
+
+          <div class="foundation-text">
+            2022年起，基金会旗下成立实习生帮扶计划，通过相应资格审核的实习生也可在实习期间享受针对自身或其家属的医疗帮扶，转正后只需简单变更即可衔接。
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+</body>
+</html>
