@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>瑙珂医院｜徐匿市脑科医院</title>
+  <style>
+    :root{
+      --bg:#f5fbf7;
+      --bg-soft:#eef8f1;
+      --card:#ffffff;
+      --line:#dbeee0;
+      --text:#274235;
+      --muted:#6c8a78;
+      --accent:#8bc9a1;
+      --accent-deep:#65af81;
+      --accent-soft:#dff3e5;
+      --shadow:0 10px 30px rgba(82, 133, 100, 0.08);
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:"Microsoft YaHei","PingFang SC","Noto Sans SC",sans-serif;
+      background:linear-gradient(180deg,#f8fdf9 0%, #f2faf4 100%);
+      color:var(--text);
+    }
+    a{text-decoration:none;color:inherit}
+    .container{max-width:1200px;margin:0 auto;padding:0 24px}
+    .topbar{
+      position:sticky;top:0;z-index:50;
+      background:rgba(255,255,255,.88);
+      backdrop-filter:blur(10px);
+      border-bottom:1px solid var(--line);
+    }
+    .nav{
+      display:flex;align-items:center;justify-content:space-between;
+      min-height:74px;gap:20px;
+    }
+    .brand h1{
+      font-size:28px;margin:0;letter-spacing:.12em;font-weight:700;
+    }
+    .brand p{
+      margin:6px 0 0;color:var(--muted);font-size:12px;letter-spacing:.18em;
+    }
+    .menu{
+      display:flex;gap:18px;flex-wrap:wrap;align-items:center;justify-content:flex-end;
+    }
+    .menu-item{position:relative}
+    .menu-btn{
+      border:none;background:transparent;color:var(--text);cursor:pointer;
+      font-size:16px;padding:10px 8px;border-radius:10px;
+    }
+    .menu-btn:hover{background:var(--bg-soft)}
+    .dropdown{
+      display:none;position:absolute;right:0;top:42px;min-width:220px;
+      background:rgba(255,255,255,.98);border:1px solid var(--line);border-radius:18px;
+      box-shadow:var(--shadow);padding:10px;
+    }
+    .menu-item:hover .dropdown{display:block}
+    .dropdown a,.dropdown button{
+      width:100%;text-align:left;border:none;background:transparent;cursor:pointer;
+      display:block;padding:11px 12px;border-radius:12px;font-size:14px;color:var(--text);
+    }
+    .dropdown a:hover,.dropdown button:hover{background:var(--bg-soft)}
+    .hero{
+      padding:72px 0 46px;
+    }
+    .hero-grid{
+      display:grid;grid-template-columns:1.15fr .85fr;gap:26px;align-items:stretch;
+    }
+    .hero-main,.hero-side,.section-card,.news-card,.list-card,.content-panel{
+      background:rgba(255,255,255,.9);border:1px solid var(--line);border-radius:28px;box-shadow:var(--shadow);
+    }
+    .hero-main{
+      padding:42px;
+      background:
+        radial-gradient(circle at 85% 12%, rgba(139,201,161,.20), transparent 28%),
+        radial-gradient(circle at 10% 90%, rgba(139,201,161,.10), transparent 32%),
+        rgba(255,255,255,.95);
+    }
+    .eyebrow{
+      display:inline-block;padding:8px 14px;border-radius:999px;
+      background:var(--accent-soft);color:var(--accent-deep);font-size:12px;
+      letter-spacing:.16em;
+    }
+    .hero-main h2{
+      font-size:46px;line-height:1.22;margin:18px 0 14px;font-weight:700;
+    }
+    .hero-main p{
+      font-size:16px;line-height:1.9;color:var(--muted);max-width:700px;margin:0;
+    }
+    .hero-actions{display:flex;gap:14px;flex-wrap:wrap;margin-top:28px}
+    .btn{
+      display:inline-flex;align-items:center;justify-content:center;gap:8px;
+      min-width:138px;padding:13px 20px;border-radius:16px;font-size:16px;
+      transition:.2s ease;
+    }
+    .btn-primary{
+      background:linear-gradient(135deg,var(--accent) 0%, var(--accent-deep) 100%);
+      color:#fff;
+      box-shadow:0 10px 22px rgba(101,175,129,.22);
+    }
+    .btn-secondary{
+      background:var(--bg-soft);color:var(--accent-deep);border:1px solid var(--line);
+    }
+    .btn:hover{transform:translateY(-1px)}
+    .hero-side{padding:28px}
+    .hero-side h3{margin:4px 0 18px;font-size:20px}
+    .side-list{display:grid;gap:12px}
+    .side-item{
+      padding:15px 16px;border-radius:18px;background:var(--bg);border:1px solid var(--line);
+    }
+    .side-item strong{display:block;font-size:15px}
+    .side-item span{display:block;margin-top:6px;color:var(--muted);font-size:13px;line-height:1.7}
+
+    section{padding:22px 0}
+    .section-head{
+      display:flex;justify-content:space-between;align-items:end;gap:16px;
+      margin-bottom:18px;
+    }
+    .section-head h3{margin:0;font-size:28px}
+    .section-head p{margin:0;color:var(--muted);font-size:14px}
+
+    .quick-grid{
+      display:grid;grid-template-columns:repeat(4,1fr);gap:18px;
+    }
+    .section-card{
+      padding:24px;transition:.2s ease;cursor:pointer;
+      display:flex;align-items:center;justify-content:center;min-height:112px;text-align:center;
+    }
+    .section-card:hover{transform:translateY(-2px);border-color:#c9e6d3}
+    .section-card h4{margin:0;font-size:19px;line-height:1.5}
+    .section-card p{margin:0;color:var(--muted);line-height:1.8;font-size:14px}
+
+    .two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+    .list-card{padding:28px}
+    .list-card h4{margin:0 0 16px;font-size:22px}
+    .tag-list,.plain-list{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+    .tag{
+      padding:10px 14px;border-radius:999px;background:var(--bg-soft);
+      color:var(--accent-deep);font-size:14px;border:1px solid var(--line);
+    }
+
+    .tag-button{
+      border:none;
+      cursor:pointer;
+      font:inherit;
+    }
+    .plain-list a,.plain-list button{
+      font-weight:500;
+      border:none;
+      background:var(--bg);
+      border:1px solid var(--line);
+      cursor:pointer;
+      padding:10px 16px;
+      border-radius:16px;
+      font-size:16px;
+      color:var(--text);
+      letter-spacing:0.02em;
+      line-height:1.6;
+    }
+    .plain-list a:hover,.plain-list button:hover{background:var(--bg-soft)}
+
+    .news-grid{display:grid;grid-template-columns:1fr;gap:14px}
+    .news-card{padding:18px 22px;border-radius:18px}
+    .news-card .date{color:var(--accent-deep);font-size:13px;margin-bottom:10px}
+    .news-card h4{font-size:22px;margin:0 0 10px;line-height:1.45}
+    .news-card p{margin:0;color:var(--muted);line-height:1.85;font-size:14px}
+
+    .content-area{margin-top:12px}
+    .content-panel{
+      display:none;padding:34px;
+    }
+    .content-panel.active{display:block}
+    .content-panel h3{
+      margin:0 0 18px;font-size:30px;
+    }
+    .content-panel .intro{
+      color:var(--muted);line-height:1.9;margin-bottom:20px;font-size:16px;
+    }
+    .article{
+      border-top:1px solid var(--line);padding-top:22px;margin-top:22px;
+    }
+    .article:first-of-type{border-top:none;padding-top:0;margin-top:0}
+    .article h4{
+      margin:0 0 12px;font-size:24px;line-height:1.5;color:#315342;
+    }
+    .article p{
+      margin:0;color:#466655;line-height:2;white-space:pre-line;font-size:16px;
+    }
+    .donation-year{
+      display:grid;grid-template-columns:130px 1fr;gap:18px;align-items:start;
+      padding:18px 0;border-top:1px dashed var(--line);
+    }
+    .donation-year:first-of-type{border-top:none}
+    .year-badge{
+      display:inline-block;padding:10px 14px;border-radius:14px;background:var(--accent-soft);
+      color:var(--accent-deep);font-weight:700;text-align:center;
+    }
+    .donors{
+      display:flex;
+      gap:18px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+    .donor{
+      font-size:16px;
+      padding:0;
+      background:transparent;
+      border:none;
+      border-radius:0;
+      color:var(--accent-deep);
+    }
+    .footer{
+      margin-top:30px;padding:30px 0 42px;border-top:1px solid var(--line);color:var(--muted);
+    }
+    .footer-grid{
+      display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;font-size:14px;
+    }
+
+    @media (max-width: 980px){
+      .hero-grid,.two-col,.news-grid,.quick-grid{grid-template-columns:1fr 1fr}
+    }
+    @media (max-width: 760px){
+      .nav{align-items:flex-start;padding:14px 0}
+      .menu{gap:8px}
+      .hero{padding-top:34px}
+      .hero-grid,.two-col,.news-grid,.quick-grid{grid-template-columns:1fr}
+      .hero-main{padding:28px}
+      .hero-main h2{font-size:34px}
+      .content-panel{padding:24px}
+      .donation-year{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container nav">
+      <div class="brand">
+        <h1>瑙珂医院</h1>
+        
+      </div>
+      <nav class="menu">
+        <div class="menu-item">
+          <button class="menu-btn" type="button">首页</button>
+          <div class="dropdown">
+            <a href="#guide">就诊指南</a>
+            <a href="#quick">在线挂号</a>
+            <a href="#quick">报告查询</a>
+            <a href="#quick">线上问诊</a>
+          </div>
+        </div>
+        <div class="menu-item">
+          <button class="menu-btn" type="button">医院概况</button>
+          <div class="dropdown">
+            <a href="#departments">科室介绍</a>
+            <a href="#experts">专家团队</a>
+            <button type="button" data-panel="research">科研教学</button>
+          </div>
+        </div>
+        <div class="menu-item">
+          <button class="menu-btn" type="button">沿革与发展</button>
+          <div class="dropdown">
+            <a href="#origin">起源</a>
+            <a href="#today">如今</a>
+          </div>
+        </div>
+        <div class="menu-item">
+          <button class="menu-btn" type="button">医院动态</button>
+          <div class="dropdown">
+            <a href="#news">AI进入临床试用？脑机接口研究中心落地</a>
+            <a href="#news">瑙珂加入积今基金会，为企业员工提供医疗保障</a>
+          </div>
+        </div>
+        <div class="menu-item">
+          <button class="menu-btn" type="button">联系我们</button>
+          <div class="dropdown">
+            <a href="#contact">广纳贤士</a>
+            <a href="#contact">来院交通</a>
+            <a href="#contact">意见反馈</a>
+            <a href="#contact">院长信箱</a>
+            <button type="button" data-panel="donation" class="tag tag-button">捐献事宜</button>
+          </div>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container hero-grid">
+        <div class="hero-main">
+          <span class="eyebrow"></span>
+          <h2></h2>
+          <p>
+            瑙珂医院始建于2010年，并于次年正式开业，为徐匿市最著名的脑科医院，
+            是具有世界影响力的脑重大疾病及罕见病治疗机构，其主营业务涵盖绝大多数脑科疾病诊疗。
+          </p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="#quick">在线挂号</a>
+            <a class="btn btn-secondary" href="#guide">就诊指南</a>
+          </div>
+        </div>
+        <aside class="hero-side">
+          <h3>重点入口</h3>
+          <div class="side-list">
+            <div class="side-item">
+              <strong>科研教学</strong>
+              <span>院内科研专题与学术交流内容。</span>
+            </div>
+            <div class="side-item">
+              <strong>捐献事宜</strong>
+              <span>查看捐献项目说明与已授权公开的捐献者名单。</span>
+            </div>
+            <div class="side-item">
+              <strong>医院动态</strong>
+              <span>查看医院近期动态信息。</span>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section id="quick">
+      <div class="container">
+        <div class="section-head">
+          <h3>快捷服务</h3>
+          
+        </div>
+        <div class="quick-grid">
+          <div class="section-card">
+            <h4>就诊指南</h4>
+            
+          </div>
+          <div class="section-card">
+            <h4>在线挂号</h4>
+            
+          </div>
+          <div class="section-card">
+            <h4>报告查询</h4>
+            
+          </div>
+          <div class="section-card">
+            <h4>线上问诊</h4>
+            
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="guide">
+      <div class="container two-col">
+        <div class="list-card">
+          <h4>医院概况</h4>
+          <div class="plain-list">
+            <a href="#departments">科室介绍</a>
+            <a href="#experts">专家团队</a>
+            <button type="button" data-panel="research">科研教学</button>
+          </div>
+        </div>
+        <div class="list-card">
+          <h4>沿革与发展</h4>
+          <div class="plain-list">
+            <a href="#origin">起源</a>
+            <a href="#today">如今</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="departments">
+      <div class="container">
+        <div class="section-head">
+          <h3>科室介绍</h3>
+          
+        </div>
+        <div class="quick-grid">
+<div class="section-card">
+            <h4>神经内科</h4>
+          </div>
+<div class="section-card">
+            <h4>神经外科</h4>
+          </div>
+<div class="section-card">
+            <h4>耳鼻喉科</h4>
+          </div>
+<div class="section-card">
+            <h4>康复医学科</h4>
+          </div>
+<div class="section-card">
+            <h4>罕见病评估与诊断</h4>
+          </div>
+</div>
+      </div>
+    </section>
+
+    <section id="experts">
+      <div class="container">
+        <div class="section-head">
+          <h3>专家团队</h3>
+          
+        </div>
+        <div class="quick-grid">
+<div class="section-card">
+            <h4>专家团队</h4>
+          </div>
+</div>
+      </div>
+    </section>
+
+    <section id="origin">
+      <div class="container two-col">
+        <div class="list-card">
+          <h4>起源</h4>
+          <p style="margin:0;color:var(--muted);line-height:1.9">瑙珂医院始建于2010年，并于次年正式开业，为徐匿市最著名的脑科医院，是具有世界影响力的脑重大疾病及罕见病治疗机构，其主营业务涵盖绝大多数脑科疾病诊疗。</p>
+        </div>
+        <div class="list-card" id="today">
+          <h4>如今</h4>
+          <p style="margin:0;color:var(--muted);line-height:1.9">瑙珂医院在脑功能性疾病上颇有建树。现如今，在脑器质性数感亢进症这一罕见疾病的确诊和治疗上具有行业领先水平。</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="news">
+      <div class="container">
+        <div class="section-head">
+          <h3>医院动态</h3>
+          
+        </div>
+        <div class="news-grid">
+          <article class="news-card">
+            <div class="date">近期动态</div>
+            <h4>AI进入临床试用？脑机接口研究中心落地</h4>
+          </article>
+          <article class="news-card">
+            <div class="date">近期动态</div>
+            <h4>瑙珂加入积今基金会，为企业员工提供医疗保障</h4>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact">
+      <div class="container two-col">
+        <div class="list-card">
+          <h4>联系我们</h4>
+          <div class="tag-list">
+            <span class="tag">广纳贤士</span>
+            <span class="tag">来院交通</span>
+            <span class="tag">意见反馈</span>
+            <span class="tag">院长信箱</span>
+            <button type="button" data-panel="donation" class="tag tag-button">捐献事宜</button>
+          </div>
+        </div>
+        <div class="list-card">
+          <h4>来院信息</h4>
+          <p style="margin:0;color:var(--muted);line-height:1.9">徐匿市瑙珂路1号<br>门诊时间 8:00-18:00<br>急诊24小时全年无休</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-area">
+      <div class="container">
+        <article class="content-panel" id="panel-research">
+          <h3>科研教学</h3>
+          <div class="intro">
+            瑙珂医院在脑科罕见病及功能性疾病方向持续推进临床与研究协同，以下为当前可公开查看的部分内容。
+          </div>
+
+          <div class="article">
+            <h4>我看什么都是数字，是不是数学天才？不，这可能是一种疾病。</h4>
+            <p>你听说过“脑器质性数感亢进症”吗？
+这种亢进症又被称作数学家综合征，罹患者会表现出特定脑区的损伤，故而对数字产生异样的感知能力，往往会在数学方面表现出过于常人的天赋，例如对数字过目不忘、能够飞速进行高难度速算等。
+或许大家会认为：这不是好事吗？这样一来，我就有成为数学家的潜力了！然而并非如此，脑器质性数感亢进症本质上仍是一种疾病。患者通常在20到30岁期间开始遭受病痛折磨，并发脑器质性精神障碍。具体表现通常为情绪异常、思维偏执，易产生妄想并企图付诸实践等，最终因器质性病变而无力回天。
+该疾病已被证实具有遗传性，存在家族聚集现象。疾病进程发展迅速，生存期5至10年，至今无法治愈。但若尽早确诊、尽早干预，患者的存活时间将会得到显著延长。
+若您恰好是此症状的患者，请不要忧虑，瑙珂随时等候您的问诊与预约。相信随着医学的发展与进步，该疾病将很快突破不可治愈的关隘，前进路上每一位患者的协助，都会成为巨大的助力。</p>
+          </div>
+
+          <div class="article">
+            <h4>欢迎奥利芙研究所的专业人士莅临交流。</h4>
+            <p>23年12月1日，知名脑构造、脑潜能和脑罕见病研究团队奥利芙研究所的专业人士莅临瑙珂，双方围绕“脑器质性数感亢进症”开展了为期两日的研讨会。席间，奥利芙研究所的创立者孟初醒女士对截止当前的治疗手段进行了总结发言。孟女士认为，患者的相关数据对改善疾病认知起到了至关重要的作用，因此应对传统的观测方式加以改进，大胆使用更具实验性的手法观测患者脑部状态。</p>
+          </div>
+        </article>
+
+        <article class="content-panel" id="panel-donation">
+          <h3>捐献事宜</h3>
+          <div class="intro">
+            自成立捐献项目以来已是第二年，瑙珂由衷感谢诸位捐献者的慷慨义举。此页专为鸣谢捐献者而设，以下是已取得公布授权的捐献者名单。
+          </div>
+
+          <div class="donation-year">
+            <div><span class="year-badge">2024年</span></div>
+            <div class="donors">
+              <span class="donor">赵一</span>
+              <span class="donor">吴二</span>
+              <span class="donor">郝桦</span>
+              <span class="donor">张三</span>
+            </div>
+          </div>
+
+          <div class="donation-year">
+            <div><span class="year-badge">2025年</span></div>
+            <div class="donors">
+              <span class="donor">李四</span>
+              <span class="donor">王五</span>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-grid">
+      <div>© 瑙珂医院 · 徐匿市脑科医院</div>
+      <div></div>
+    </div>
+  </footer>
+
+  <script>
+    const panelButtons = document.querySelectorAll('[data-panel]');
+    const panels = document.querySelectorAll('.content-panel');
+
+    function openPanel(name){
+      panels.forEach(panel => panel.classList.remove('active'));
+      const target = document.getElementById('panel-' + name);
+      if(target){
+        target.classList.add('active');
+        target.scrollIntoView({behavior:'smooth', block:'start'});
+      }
+    }
+
+    panelButtons.forEach(btn => {
+      btn.addEventListener('click', () => openPanel(btn.dataset.panel));
+    });
+
+    if(window.location.hash === '#research'){
+      openPanel('research');
+    }
+    if(window.location.hash === '#donation'){
+      openPanel('donation');
+    }
+  </script>
+</body>
+</html>
